@@ -1,6 +1,6 @@
 {
   "name": "insight-ui-komodo",
-  "description": "An open-source frontend for the Insight API. The Insight API provides you with a convenient, powerful and simple way to query and broadcast data on the komodo network and build your own services with it.",
+  "description": "An open-source frontend for the Insight API. The Insight API provides you with a convenient, powerful and simple way to query and broadcast data on the verus network and build your own services with it.",
   "version": "0.4.0",
   "repository": "git+https://git@github.com/BloodyNora/insight-ui-komodo.git",
   "contributors": [
@@ -30,15 +30,15 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/supernetorg/insight-ui-komodo/issues"
+    "url": "https://github.com/BloodyNora/insight-ui-komodo/issues"
   },
-  "homepage": "https://github.com/supernetorg/insight-ui-komodo",
+  "homepage": "https://verus.io",
   "license": "MIT",
   "keywords": [
     "insight",
     "blockchain",
     "blockexplorer",
-    "komodo",
+    "verus",
     "bitcore",
     "front-end"
   ],

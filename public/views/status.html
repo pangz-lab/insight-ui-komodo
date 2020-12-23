@@ -1,7 +1,7 @@
 <div data-ng-include src="'views/includes/connection.html'"></div>
 <section>
   <div class="page-header">
-    <h1 translate>Application Status</h1>
+    <h1 translate>Explorer Status</h1>
   </div>
   <div id="status" class="row">
 
@@ -31,30 +31,6 @@
             </span>
           </td>
           </tr>
-          <tr>
-            <td translate>Start Date</td>
-            <td class="text-right"><time title="{{sync.startTs | date:'medium'}}">{{humanSince(sync.startTs)}}</time></td>
-          </tr>
-          <tr data-ng-show="sync.endTs">
-            <td translate>Finish Date</td>
-            <td class="text-right"><time title="{{sync.startTs | date:'medium'}}" >{{humanSince(sync.endTs)}}</time></td>
-          </tr>
-          <tr>
-            <td translate>Initial Block Chain Height</td>
-            <td class="text-right">{{sync.blockChainHeight}}</td>
-          </tr>
-          <tr>
-            <td translate>Synced Blocks</td>
-            <td class="text-right">{{sync.syncedBlocks}}</td>
-          </tr>
-          <tr>
-            <td translate>Skipped Blocks (previously synced)</td>
-            <td class="text-right">{{sync.skippedBlocks}}</td>
-          </tr>
-          <tr>
-            <td translate>Sync Type</td>
-            <td class="text-right">{{sync.type}}</td>
-          </tr>
         </tbody>
       </table>
 
@@ -63,11 +39,11 @@
         <thead data-ng-include src="'views/includes/infoStatus.html'"></thead>
         <tbody>
           <tr>
-            <td translate>Last Block Hash (Komodod)</td>
+            <td translate>Last Block Hash (Verus Daemon)</td>
             <td class="text-right ellipsis"><a href="block/{{lastblockhash}}">{{lastblockhash}}</a></td>
           </tr>
           <tr>
-            <td translate>Current Blockchain Tip (insight)</td>
+            <td translate>Current Blockchain Tip (Insight)</td>
             <td class="text-right ellipsis"><a href="block/{{syncTipHash}}">{{syncTipHash}}</a></td>
           </tr>
         </tbody>
@@ -107,14 +83,6 @@
           <tr>
             <td translate>Network</td>
             <td class="text-right">{{info.network}}</td>
-          </tr>
-          <tr>
-            <td translate>Proxy setting</td>
-            <td class="text-right">{{info.proxy}}</td>
-          </tr>
-          <tr>
-            <td translate>Info Errors</td>
-            <td class="text-right">{{info.infoErrors}}</td>
           </tr>
         </tbody>
       </table>
