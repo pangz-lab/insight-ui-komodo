@@ -25,11 +25,11 @@ angular.module('insight').config(function($routeProvider) {
     }).
     when('/blocks', {
       templateUrl: 'views/block_list.html',
-      title: 'Verus Blocks solved Today'
+      title: 'Blocks'
     }).
     when('/blocks-date/:blockDate/:startTimestamp?', {
       templateUrl: 'views/block_list.html',
-      title: 'Verus Blocks solved '
+      title: 'Blocks ' // trailing space in string!
     }).
     when('/address/:addrStr', {
       templateUrl: 'views/address.html',
