@@ -43,19 +43,18 @@
     "front-end"
   ],
   "bitcoreNode": "bitcore-node-komodo",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "bower": "~1.2.8",
-    "grunt": "~0.4.2",
-    "grunt-cli": "~0.1.11",
+    "bower": "^1.2.8",
+    "grunt": "^0.4.5",
+    "grunt-angular-gettext": "^0.2.15",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-concat": "^0.3.0",
     "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.3.2",
-    "grunt-contrib-watch": "*",
-    "grunt-macreload": "*",
-    "grunt-css": "~0.5.4",
-    "grunt-markdown": "~0.5.0",
-    "grunt-angular-gettext": "^0.2.15"
+    "grunt-contrib-uglify": "^0.3.3",
+    "grunt-contrib-watch": "^1.1.0",
+    "grunt-css": "^0.5.4",
+    "grunt-macreload": "^0.1.4",
+    "grunt-markdown": "^0.5.0"
   }
 }

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Insight\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Sascha Dückers <s.dueckers@gmail.com>\n"
+"Last-Translator: 0x03 <0x03-ctrlc@protonmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -118,7 +118,7 @@ msgstr "Bestätigungen"
 
 #: public/views/includes/header.html
 msgid "Conn"
-msgstr "Verbindungen"
+msgstr "Verb."
 
 #: public/views/status.html
 msgid "Connections to other nodes"

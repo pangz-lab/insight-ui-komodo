@@ -38,10 +38,10 @@
         <thead>
           <tr>
             <th translate>Height</th>
+            <th translate>Hash</th>
+            <th class="text-right" translate>TXs</th>
+            <!--//<th class="text-right" translate>Size</th>//-->
             <th translate>Timestamp</th>
-            <th class="text-right" translate>Transactions</th>
-            <th class="text-right hidden-xs" translate>Mined by</th>
-            <th class="text-right" translate>Size</th>
           </tr>
         </thead>
         <tbody>
@@ -50,10 +50,10 @@
         </tr>
         <tr class="fader" data-ng-repeat='b in blocks'>
           <td><a href="block/{{b.hash}}">{{b.height}}</a></td>
-          <td>{{b.time * 1000 | date:'medium'}}</td>
+          <td><a href="block/{{b.hash}}">{{b.hash}}</a></td>
           <td class="text-right">{{b.txlength}}</td>
-          <td class="text-right hidden-xs"><a href="{{b.poolInfo.url}}" title="{{b.poolInfo.poolName}}" target="_blank" data-ng-show="b.poolInfo">{{b.poolInfo.poolName}}</a></td>
-          <td class="text-right">{{b.size}}</td>
+          <!--//<td class="text-right">{{b.size}}</td>//-->
+          <td>{{b.time * 1000 | date:'medium'}}</td>
         </tr>
         </tbody>
       </table>

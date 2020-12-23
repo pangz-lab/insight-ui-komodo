@@ -44,7 +44,8 @@ module.exports = function(grunt) {
         src: [
           'public/lib/bootstrap/dist/css/bootstrap.min.css',
           'public/lib/c3/c3.min.css',
-          'public/src/css/**/*.css'
+          'public/src/css/**/*.css',
+          'public/src/css/*.css',
         ],
         dest: 'public/css/main.css'
       }
@@ -97,7 +98,7 @@ module.exports = function(grunt) {
         tasks: ['concat:main', 'uglify:main'],
       },
       css: {
-        files: ['public/src/css/**/*.css'],
+        files: ['public/src/css/**/*.css', 'public/src/css/*.css'],
         tasks: ['concat:css', 'cssmin'],
       },
     },
