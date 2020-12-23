@@ -3,6 +3,7 @@
 # Installation steps needed to install grunt and successfully compile translations:
 
 npm install "grunt"
+npm install "grunt-cli"
 npm install "grunt-contrib-uglify"
 npm install "grunt-contrib-concat"
 npm install "grunt-contrib-watch"
