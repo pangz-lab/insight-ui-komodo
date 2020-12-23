@@ -623,8 +623,9 @@ margin-left: 0;
 }
 #powered a.verusio {
   background-image: url('../img/verus-logo-blue.png');
-  background-size: 75px;
-  width: 30%;
+  background-size: 240px;
+  background-position: center center;
+  width: 100%;
 }
 #powered a.nodejs {
   background-image: url('../img/nodejs.png');
