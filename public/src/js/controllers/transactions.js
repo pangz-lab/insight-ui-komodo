@@ -28,7 +28,7 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
         items[i].notAddr = true;
         notAddr = true;
       }
-
+ 
       // non standard output
       if (items[i].scriptPubKey && !items[i].scriptPubKey.addresses) {
         items[i].scriptPubKey.addresses = ['Unparsed address [' + u++ + ']'];
@@ -42,7 +42,7 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
         ret.push(items[i]);
         continue;
       }
-
+      
       var addr = items[i].addr || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
 
       if (!tmp[addr]) {
@@ -53,6 +53,8 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
         tmp[addr].items = [];
       }
       tmp[addr].isSpent = items[i].spentTxId;
+       
+      tmp[addr].address_pbaas = items[i].addresses; 
 
       tmp[addr].doubleSpentTxID = tmp[addr].doubleSpentTxID   || items[i].doubleSpentTxID;
       tmp[addr].doubleSpentIndex = tmp[addr].doubleSpentIndex || items[i].doubleSpentIndex;
@@ -60,7 +62,13 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
       tmp[addr].valueSat += Math.round(items[i].value * COIN);
       tmp[addr].items.push(items[i]);
       tmp[addr].notAddr = notAddr;
-
+      tmp[addr].script_reserve_balance = items[i].script_reserve_balance;
+      
+      if(items[i].script_reserve_balance){
+      var currency = Object.keys(items[i].script_reserve_balance);
+      var currency_value = Object.values(items[i].script_reserve_balance);
+        tmp[addr].pbaas = ' ' + currency_value + ' ' + currency[0]; 
+      }
       if (items[i].unconfirmedInput)
         tmp[addr].unconfirmedInput = true;
 
