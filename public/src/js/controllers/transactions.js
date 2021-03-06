@@ -45,6 +45,9 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
       
       var addr = items[i].addr || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
 
+      if(items[i].identityprimary)
+          addr = items[i].identityprimary.primaryaddresses[0];
+
       if (!tmp[addr]) {
         tmp[addr] = {};
         tmp[addr].valueSat = 0;
@@ -63,7 +66,15 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
       tmp[addr].items.push(items[i]);
       tmp[addr].notAddr = notAddr;
       tmp[addr].script_reserve_balance = items[i].script_reserve_balance;
+      tmp[addr].identityprimary = items[i].identityprimary; //Identities
+      tmp[addr].currencydefinition = items[i].currencydefinition; //Currency definition
       
+     
+      if(items[i].other_commitment){
+        var other_commit = Object.keys(items[i].other_commitment)[0];
+        tmp[addr].othercommitment = other_commit;
+      }
+
       if(items[i].script_reserve_balance){
       var currency = Object.keys(items[i].script_reserve_balance);
       var currency_value = Object.values(items[i].script_reserve_balance);
