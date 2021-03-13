@@ -21,7 +21,10 @@ angular.module('insight.system').controller('HeaderController',
     }, {
       'title': 'Status',
       'link': 'status'
-    }];
+    }, {
+      'title': 'Help',
+      'link': 'help'
+    }]; 
 
     $scope.openScannerModal = function() {
       var modalInstance = $modal.open({
