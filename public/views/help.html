@@ -1,0 +1,63 @@
+<div data-ng-include src="'views/includes/connection.html'"></div>
+<section>
+  <div class="page-header">
+    <h1 translate>Help section</h1>
+  </div>
+  <div id="help" class="row">
+
+    
+      <h2 translate>API commands</h2>
+      <table class="table" data-ng-controller="StatusController" data-ng-init="getSync()">
+        <tbody>
+          <tr>
+            <td translate>View Address Balance</td>
+            <td class="text-right ellipsis"><a href="https://insight.verus.io/insight-api-komodo/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT">https://insight.verus.io/insight-api-komodo/address/RP9tNCn6LHEYS7Yrp3NVuSu7DJZjAW6GyT</a></td>
+          </tr>
+          <tr>
+          <tr>
+            <td translate>View Transaction details</td>
+            <td class="text-right"><a href="https://insight.verus.io/insight-api-komodo/tx/60678d67f25f21014c2f6b8fb3948ea3a2522f76339315c81b7a47f9ce7d5d63">https://insight.verus.io/insight-api-komodo/tx/106f....8c30c59b033b</a></td>
+          </tr>
+            <tr>
+            <td translate>Get Block</td>
+            <td class="text-right"><a href="https://insight.verus.io/insight-api-komodo/block/0a5cde67e52e9d855f5e22928a730801e2d70ad7606ad767e16d00f2d546115b">https://insight.verus.io/insight-api-komodo/block/block-hash</block-hash>></a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 translate>Website Links</h2>
+      <table class="table" style="table-layout: fixed" >
+
+        <tbody>
+          <tr>
+            <td translate>Main Website Technology</td>
+            <td class="text-right ellipsis"><a href="https://verus.io/technology">https://verus.io/technology</a></td>
+          </tr>
+          <tr>
+            <td translate>Verus Wiki</td>
+            <td class="text-right ellipsis"><a href="https://wiki.verus.io/#!index.md">https://wiki.verus.io/#!index.md</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 translate>Transaction information</h2>
+      <table class="table" style="table-layout: fixed" >
+
+        <tbody>
+          <tr>
+            <td translate>Reserve Transfer</td>
+            <td class="text-right ellipsis">This transaction contacins a Verus currency transfer</td>
+          </tr>
+          <tr>
+            <td translate>Cross Chain Export</td>
+            <td class="text-right ellipsis">This transaction is a transfer to a Verus currency or PBAAS chain</td>
+          </tr>
+          <tr>
+            <td translate>PBAAS Notarization</td>
+            <td class="text-right ellipsis">This transaction is a notarisation across a chain to imute the chains together</td>
+          </tr>
+        </tbody>
+      </table>
+   
+  </div>
+</section>
