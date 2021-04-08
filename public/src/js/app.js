@@ -1,6 +1,6 @@
 'use strict';
 
-var testnet = true;
+var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 
 var defaultLanguage = localStorage.getItem('insight-language') || 'en';
