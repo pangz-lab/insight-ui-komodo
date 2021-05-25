@@ -59,7 +59,50 @@
         </table>
 
       </div>
-
+      <div class="col-xs-12 col-md-4 col-gray">
+        <h2 translate>Verus Blockchain information</h2>
+        <table class="table" data-ng-controller="StatusController" data-ng-init="getStatus('Info');getStatus('MiningInfo');getStatus('coinSupply')">
+          <thead  data-ng-include src="'views/includes/infoStatus.html'"></thead>
+          <tbody>
+            <tr>
+              <td translate>Version</td>
+              <td class="text-right">{{info.version}}</td>
+            </tr>
+            <tr>
+              <td translate>Protocol version</td>
+              <td class="text-right">{{info.protocolversion}}</td>
+            </tr>
+            <tr>
+              <td translate>Blocks</td>
+              <td class="text-right"><a href="block-index/{{info.blocks}}">{{info.blocks}}</a></td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply Transparent</td>
+              <td class="text-right">{{coinSupply.supply}} VRSC</td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply in Z addresses</td>
+              <td class="text-right">{{coinSupply.zfunds}} VRSC</td>
+            </tr>
+            <tr>
+              <td translate>Circulating Supply Total</td>
+              <td class="text-right">{{coinSupply.total}} VRSC</td>
+            </tr>
+            <tr>
+              <td translate>Network Hashrate</td>
+              <td class="text-right">{{mininginfo.networkhashps}}</td>
+            </tr>
+            <tr>
+             <td translate>Mining Difficulty</td>
+              <td class="text-right">{{info.difficulty}}</td>
+            </tr>
+            <tr>
+              <td translate>Node connections</td>
+              <td class="text-right">{{info.connections}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div> <!-- END OF COL-GRAY -->
       <div class="col-xs-12 col-md-4 col-gray">
         <h2 translate>What is Verus?</h2>
 
