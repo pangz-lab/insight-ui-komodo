@@ -10,7 +10,7 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
   var pagesTotal = 1;
   var COIN = 100000000;
 
-  var _aggregateItems = function(items) {
+  var _aggregateItems = function(items, callback) {
     if (!items) return [];
 
     var l = items.length;
@@ -20,92 +20,93 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
     var u = 0;
 
     for(var i=0; i < l; i++) {
-      var notAddr = false;
-      // non standard input
-      if (items[i].scriptSig && !items[i].addresses) {
-        // items[i].addr = 'Unparsed address 1 [' + u++ + ']';
-        items[i].addr = 'OP_RETURN';
-        items[i].notAddr = true;
-        notAddr = true;
-      }
+      callback(items, i);
+      // var notAddr = false;
+      // // non standard input
+      // if (items[i].scriptSig && !items[i].addresses) {
+      //   // items[i].addr = 'Unparsed address 1 [' + u++ + ']';
+      //   items[i].addr = 'OP_RETURN';
+      //   items[i].notAddr = true;
+      //   notAddr = true;
+      // }
  
-      // non standard output
-      if (items[i].scriptPubKey && typeof(items[i].scriptPubKey.addresses) !== "object") {
-        items[i].scriptPubKey.addresses = [ 'OP_RETURN' ];
-        items[i].notAddr = true;
-        notAddr = true;
-      }
+      // // non standard output
+      // if (items[i].scriptPubKey && typeof(items[i].scriptPubKey.addresses) !== "object") {
+      //   items[i].scriptPubKey.addresses = [ 'OP_RETURN' ];
+      //   items[i].notAddr = true;
+      //   notAddr = true;
+      // }
 
-      // multiple addr at output
-      if (items[i].scriptPubKey 
-        && typeof items[i].scriptPubKey.addresses === "object" 
-        &&  items[i].scriptPubKey.addresses.length > 1) {
+      // // multiple addr at output
+      // if (items[i].scriptPubKey 
+      //   && typeof items[i].scriptPubKey.addresses === "object" 
+      //   &&  items[i].scriptPubKey.addresses.length > 1) {
 
-        items[i].addr = items[i].scriptPubKey.addresses.join(',');
-        ret.push(items[i]);
-        continue;
-      }
+      //   items[i].addr = items[i].scriptPubKey.addresses.join(',');
+      //   ret.push(items[i]);
+      //   continue;
+      // }
 
-      // multiple addr at output
-      if (items[i].scriptPubKey 
-        && typeof items[i].scriptPubKey.addresses === "object" 
-        &&  items[i].scriptPubKey.addresses.length == 1) {
+      // // multiple addr at output
+      // if (items[i].scriptPubKey 
+      //   && typeof items[i].scriptPubKey.addresses === "object" 
+      //   &&  items[i].scriptPubKey.addresses.length == 1) {
 
-        items[i].addr = items[i].scriptPubKey.addresses[0];
-        ret.push(items[i]);
-        continue;
-      }
+      //   items[i].addr = items[i].scriptPubKey.addresses[0];
+      //   ret.push(items[i]);
+      //   continue;
+      // }
       
-      if (items[i].scriptPubKey && items[i].scriptPubKey.addresses) {
-        items[i].addr = "OP_RETURN"
-        ret.push(items[i]);
-        continue;
-      }
+      // if (items[i].scriptPubKey && items[i].scriptPubKey.addresses) {
+      //   items[i].addr = "OP_RETURN"
+      //   ret.push(items[i]);
+      //   continue;
+      // }
       
-      var addr = (items[i].addresses && items[i].addresses[0]) 
-      || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
+      // var addr = (items[i].addresses && items[i].addresses[0]) 
+      // || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
 
-      var addr = items[i].addr || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
+      // var addr = items[i].addr || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
 
-      if(items[i].identityprimary)
-          addr = items[i].identityprimary.primaryaddresses[0];
+      // if(items[i].identityprimary)
+      //     addr = items[i].identityprimary.primaryaddresses[0];
 
-      if (!tmp[addr]) {
-        tmp[addr] = {};
-        tmp[addr].valueSat = 0;
-        tmp[addr].count = 0;
-        tmp[addr].addr = addr;
-        tmp[addr].items = [];
-      }
-      tmp[addr].isSpent = items[i].spentTxId;
+      // if (!tmp[addr]) {
+      //   tmp[addr] = {};
+      //   tmp[addr].valueSat = 0;
+      //   tmp[addr].count = 0;
+      //   tmp[addr].addr = addr;
+      //   tmp[addr].items = [];
+      // }
+      // tmp[addr].isSpent = items[i].spentTxId;
        
-      tmp[addr].address_pbaas = items[i].addresses; 
+      // tmp[addr].address_pbaas = items[i].addresses; 
 
-      tmp[addr].doubleSpentTxID = tmp[addr].doubleSpentTxID   || items[i].doubleSpentTxID;
-      tmp[addr].doubleSpentIndex = tmp[addr].doubleSpentIndex || items[i].doubleSpentIndex;
-      tmp[addr].dbError = tmp[addr].dbError || items[i].dbError;
-      tmp[addr].valueSat += Math.round(items[i].value * COIN);
-      tmp[addr].items.push(items[i]);
-      tmp[addr].notAddr = notAddr;
-      tmp[addr].script_reserve_balance = items[i].script_reserve_balance;
-      tmp[addr].identityprimary = items[i].identityprimary; //Identities
-      tmp[addr].currencydefinition = items[i].currencydefinition; //Currency definition
+      // tmp[addr].doubleSpentTxID = tmp[addr].doubleSpentTxID   || items[i].doubleSpentTxID;
+      // tmp[addr].doubleSpentIndex = tmp[addr].doubleSpentIndex || items[i].doubleSpentIndex;
+      // tmp[addr].dbError = tmp[addr].dbError || items[i].dbError;
+      // tmp[addr].valueSat += Math.round(items[i].value * COIN);
+      // tmp[addr].items.push(items[i]);
+      // tmp[addr].notAddr = notAddr;
+      // tmp[addr].script_reserve_balance = items[i].script_reserve_balance;
+      // tmp[addr].identityprimary = items[i].identityprimary; //Identities
+      // tmp[addr].currencydefinition = items[i].currencydefinition; //Currency definition
       
      
-      if(items[i].other_commitment){
-        var other_commit = Object.keys(items[i].other_commitment)[0];
-        tmp[addr].othercommitment = other_commit;
-      }
+      // if(items[i].other_commitment){
+      //   var other_commit = Object.keys(items[i].other_commitment)[0];
+      //   tmp[addr].othercommitment = other_commit;
+      // }
 
-      if(items[i].script_reserve_balance){
-      var currency = Object.keys(items[i].script_reserve_balance);
-      var currency_value = Object.values(items[i].script_reserve_balance);
-        tmp[addr].pbaas = ' ' + currency_value + ' ' + currency[0]; 
-      }
-      if (items[i].unconfirmedInput)
-        tmp[addr].unconfirmedInput = true;
+      // if(items[i].script_reserve_balance){
+      // var currency = Object.keys(items[i].script_reserve_balance);
+      // var currency_value = Object.values(items[i].script_reserve_balance);
+      //   tmp[addr].pbaas = ' ' + currency_value + ' ' + currency[0]; 
+      // }
+      // if (items[i].unconfirmedInput)
+      //   tmp[addr].unconfirmedInput = true;
 
-      tmp[addr].count++;
+      // tmp[addr].count++;
     }
 
     angular.forEach(tmp, function(v) {
@@ -117,9 +118,17 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
 
   var _processTX = function(tx) {
     console.log("VIN >>");
-    tx.vinSimple = _aggregateItems(tx.vin);
+    tx.vinSimple = _aggregateItems(tx.vin, function(items, i) {
+      items[i].uiWalletAddress = ( typeof(items[i].addresses) === "object" )
+        ? items[i].addresses[0] 
+        : items[i].addresses;
+    });
     console.log("VOUT >>");
-    tx.voutSimple = _aggregateItems(tx.vout);
+    tx.voutSimple = _aggregateItems(tx.vout, function(items, i) {
+      items[i].uiWalletAddress = ( typeof(items[i].scriptPubKey.addresses) === "object" )
+        ? items[i].scriptPubKey.addresses.join(",")
+        : items[i].scriptPubKey;
+    });
   };
 
   var _paginate = function(data) {
