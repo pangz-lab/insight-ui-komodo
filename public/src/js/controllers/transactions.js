@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('insight.transactions').controller('transactionsController',
-function($scope, $rootScope, $routeParams, $location, Global, Transaction, TransactionsByBlock, TransactionsByAddress) {
+function($scope, $rootScope, $routeParams, $location, Global, Transaction, TransactionsByBlock, TransactionsByAddress, VerusdRPC) {
   $scope.global = Global;
   $scope.loading = false;
   $scope.loadedBy = null;
@@ -20,29 +20,51 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
     var u = 0;
 
     for(var i=0; i < l; i++) {
-
       var notAddr = false;
       // non standard input
-      if (items[i].scriptSig && !items[i].addr) {
-        items[i].addr = 'Unparsed address [' + u++ + ']';
+      if (items[i].scriptSig && !items[i].addresses) {
+        // items[i].addr = 'Unparsed address 1 [' + u++ + ']';
+        items[i].addr = 'OP_RETURN';
         items[i].notAddr = true;
         notAddr = true;
       }
  
       // non standard output
-      if (items[i].scriptPubKey && !items[i].scriptPubKey.addresses) {
-        items[i].scriptPubKey.addresses = ['Unparsed address [' + u++ + ']'];
+      if (items[i].scriptPubKey && typeof(items[i].scriptPubKey.addresses) !== "object") {
+        items[i].scriptPubKey.addresses = [ 'OP_RETURN' ];
         items[i].notAddr = true;
         notAddr = true;
       }
 
       // multiple addr at output
-      if (items[i].scriptPubKey && items[i].scriptPubKey.addresses.length > 1) {
+      if (items[i].scriptPubKey 
+        && typeof items[i].scriptPubKey.addresses === "object" 
+        &&  items[i].scriptPubKey.addresses.length > 1) {
+
         items[i].addr = items[i].scriptPubKey.addresses.join(',');
         ret.push(items[i]);
         continue;
       }
+
+      // multiple addr at output
+      if (items[i].scriptPubKey 
+        && typeof items[i].scriptPubKey.addresses === "object" 
+        &&  items[i].scriptPubKey.addresses.length == 1) {
+
+        items[i].addr = items[i].scriptPubKey.addresses[0];
+        ret.push(items[i]);
+        continue;
+      }
       
+      if (items[i].scriptPubKey && items[i].scriptPubKey.addresses) {
+        items[i].addr = "OP_RETURN"
+        ret.push(items[i]);
+        continue;
+      }
+      
+      var addr = (items[i].addresses && items[i].addresses[0]) 
+      || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
+
       var addr = items[i].addr || (items[i].scriptPubKey && items[i].scriptPubKey.addresses[0]);
 
       if(items[i].identityprimary)
@@ -94,7 +116,9 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
   };
 
   var _processTX = function(tx) {
+    console.log("VIN >>");
     tx.vinSimple = _aggregateItems(tx.vin);
+    console.log("VOUT >>");
     tx.voutSimple = _aggregateItems(tx.vout);
   };
 
@@ -129,28 +153,45 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
   };
 
   var _findTx = function(txid) {
-    Transaction.get({
-      txId: txid
-    }, function(tx) {
-      $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
-      $rootScope.flashMessage = null;
-      $scope.tx = tx;
-      _processTX(tx);
-      $scope.txs.unshift(tx);
-    }, function(e) {
-      if (e.status === 400) {
-        $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
-      }
-      else if (e.status === 503) {
-        $rootScope.flashMessage = 'Backend Error. ' + e.data;
-      }
-      else {
-        $rootScope.flashMessage = 'Transaction Not Found';
-      }
+    VerusdRPC.getBlockCount()
+    .then(function(blockData) {
+      VerusdRPC.getRawTransaction(txid)
+      .then(function(data) {
 
-      $location.path('/');
+        var tx = transformTransaction(data.result, blockData.result);
+        console.log(tx);
+        $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
+        $rootScope.flashMessage = null;
+        $scope.tx = tx;
+        _processTX(tx);
+        $scope.txs.unshift(tx);
+      })
+      .catch(function(e) {
+        if (e.status === 400) {
+          $rootScope.flashMessage = 'Invalid Transaction ID: ' + $routeParams.txId;
+        }
+        else if (e.status === 503) {
+          $rootScope.flashMessage = 'Backend Error. ' + e.data;
+        }
+        else {
+          $rootScope.flashMessage = 'Transaction Not Found';
+        }
+
+        $location.path('/');
+      });
+        
     });
   };
+
+  function transformTransaction(tx, currentBlockHeight) {
+    tx.fees = 1.1; // TODO
+    tx.valueOut = 0.1; // TOD
+    tx.confirmations = currentBlockHeight - tx.height + 1;
+    tx.size = tx.hex.length / 2;
+    tx.isCoinBase = (tx.coinbase);
+    var transformed = structuredClone(tx);
+    return transformed;
+  }
 
   $scope.findThis = function() {
     _findTx($routeParams.txId);
