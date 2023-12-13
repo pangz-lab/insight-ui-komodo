@@ -2,7 +2,8 @@
 
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
+const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
 
