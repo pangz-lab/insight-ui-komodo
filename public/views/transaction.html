@@ -55,6 +55,7 @@
         <tr data-ng-show="tx.fees">
           <td><strong translate>Fee Rate</strong></td>
           <td class="text-muted text-right">{{$root.currency.getConvertion((tx.fees * 1000) / tx.size) + ' per kB'}}</td>
+          <!-- <td class="text-muted text-right">{{tx.feeRate + ' per kB'}}</td> -->
         </tr>
         <tr>
           <td><strong translate>Received Time</strong></td>
@@ -78,7 +79,7 @@
           <td><strong>LockTime</strong></td>
           <td class="text-muted text-right">{{tx.locktime}}</td>
         </tr>
-        <tr data-ng-show="tx.isCoinBase">
+        <tr data-ng-show="tx.isNewlyCreatedCoin">
           <td><strong>Coinbase</strong></td>
           <td class="text-muted text-right">
             <div class="ellipsis">

@@ -34,6 +34,17 @@ angular.module('insight.verusdrpc')
     function getBlockCount() {
       return sendRequest(createPayload("getblockcount", []));
     };
+    
+    function getIdentity(params) {
+      return sendRequest(createPayload("getidentity", params));
+    };
+    
+    function getAddressTxIds(addresses) {
+      return sendRequest(createPayload("getaddresstxids", [{"addresses": addresses}]));
+    };
+    function getAddressBalance(addresses) {
+      return sendRequest(createPayload("getaddressbalance", [{"addresses": addresses}]));
+    };
 
     return {
       getRawTransaction: function(txId) {
@@ -41,6 +52,15 @@ angular.module('insight.verusdrpc')
       },
       getBlockCount: function() {
         return getBlockCount();
-      }
+      },
+      getIdentity: function(params) {
+        return getIdentity(params);
+      },
+      getAddressTxIds: function(addresses) {
+        return getAddressTxIds(addresses);
+      },
+      getAddressBalance: function(addresses) {
+        return getAddressBalance(addresses);
+      },
     };
 });

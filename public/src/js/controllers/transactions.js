@@ -1,27 +1,37 @@
 'use strict';
 
 angular.module('insight.transactions').controller('transactionsController',
-function($scope, $rootScope, $routeParams, $location, Global, Transaction, TransactionsByBlock, TransactionsByAddress, VerusdRPC) {
+function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBlock, VerusdRPC) {
   $scope.global = Global;
-  $scope.loading = false;
+  $scope.loading = true;
   $scope.loadedBy = null;
 
-  var pageNum = 0;
-  var pagesTotal = 1;
-  var COIN = 100000000;
+  // var pageNum = 0;
+  // var pagesTotal = 1;
+  var txVoutTotalValue = 0;
+  var txVinTotalValue = 0;
+  var startIndexLabel = 0;
+  // var addressCommitments = {};
+  // var COIN = 100000000;
+  const COIN = 1e8;
+  // const MVRSC_CURRENCY_FACTOR = 1000;
+
+  // const convertValueToCurrencyFactor = function(value) {
+  //   return parseFloat((value * MVRSC_CURRENCY_FACTOR).toFixed(5));
+  // }
 
   var _aggregateItems = function(items, callback) {
     if (!items) return [];
 
     var l = items.length;
 
-    var ret = [];
-    var tmp = {};
-    var u = 0;
+    // var ret = [];
+    // var tmp = {};
+    // var u = 0;
 
     for(var i=0; i < l; i++) {
       callback(items, i);
-      // var notAddr = false;
+      // var notAddr = false; 
       // // non standard input
       // if (items[i].scriptSig && !items[i].addresses) {
       //   // items[i].addr = 'Unparsed address 1 [' + u++ + ']';
@@ -109,71 +119,162 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
       // tmp[addr].count++;
     }
 
-    angular.forEach(tmp, function(v) {
-      v.value    = v.value || parseInt(v.valueSat) / COIN;
-      ret.push(v);
-    });
-    return ret;
+    // angular.forEach(tmp, function(v) {
+    //   v.value    = v.value || parseInt(v.valueSat) / COIN;
+    //   ret.push(v);
+    // });
+    // return ret;
   };
 
-  var _processTX = function(tx) {
+  var _processTX = function(tx, currentBlockHeight) {
     console.log("VIN >>");
-    tx.vinSimple = _aggregateItems(tx.vin, function(items, i) {
+    txVinTotalValue = 0;
+    txVoutTotalValue = 0;
+    addressCommitments = {};
+    const hasVin = tx.vin != undefined && tx.vin[0] != undefined;
+    const hasVout = tx.vout != undefined && tx.vout[0] != undefined;
+    ///////////////////////////////////
+    // vin operation
+    ///////////////////////////////////
+    _aggregateItems(tx.vin == undefined ? [] : tx.vin, function(items, i) {
       items[i].uiWalletAddress = ( typeof(items[i].addresses) === "object" )
         ? items[i].addresses[0] 
         : items[i].addresses;
+
+      txVinTotalValue += items[i].value;
     });
-    console.log("VOUT >>");
-    tx.voutSimple = _aggregateItems(tx.vout, function(items, i) {
-      items[i].uiWalletAddress = ( typeof(items[i].scriptPubKey.addresses) === "object" )
-        ? items[i].scriptPubKey.addresses.join(",")
-        : items[i].scriptPubKey;
+
+    ///////////////////////////////////
+    // vout operation
+    ///////////////////////////////////
+    _aggregateItems(tx.vout, function(items, i) {
+      console.log(typeof(items[i].scriptPubKey.addresses));
+      const addressType = typeof(items[i].scriptPubKey.addresses);
+      const pubKeyAddressess = items[i].scriptPubKey.addresses ? items[i].scriptPubKey.addresses : [];
+      var isIdentityTx = false;
+      var identityPrimaryName = "";
+      var uiWalletAddress = "";
+      
+      if(addressType === "object" && items[i].scriptPubKey.identityprimary) {
+        // VerusID transaction
+        // Get the first primary address
+        isIdentityTx = true;
+        uiWalletAddress = items[i].scriptPubKey.identityprimary.primaryaddresses[0];
+        identityPrimaryName = items[i].scriptPubKey.identityprimary.name +'@';
+
+      } else if(addressType === "object" ) {
+        // Array of addresses - get the first one
+        uiWalletAddress = pubKeyAddressess[0];
+      } else {
+        uiWalletAddress = pubKeyAddressess.join(",");
+      }
+      
+      
+      tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
+      tx.vout[i].isSpent = items[i].spentTxId;
+      tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
+      tx.vout[i].identityTxTypeLabel = "TODO";
+      tx.vout[i].othercommitment = _getOtherTxCommitment(items[i].scriptPubKey);
+      tx.vout[i].pbaasCurrencies = _getPbaasCommitment(items[i].scriptPubKey);
+      tx.vout[i].isPbaasCurrencyExist = tx.vout[i].pbaasCurrencies[0] != undefined;
+
+      txVoutTotalValue += items[i].value;
+      
+      if(isIdentityTx) {
+        VerusdRPC.getIdentity([identityPrimaryName, tx.height])
+        .then(function(data) {
+          tx.vout[i].identityTxTypeLabel = (data.result) ? "Verus - ID mutation" : "Identity Commitment";
+        });
+      }
     });
+
+
+    // New properties calculated manually
+    tx.confirmations = tx.height? currentBlockHeight - tx.height + 1 : 0;
+    tx.size = tx.hex.length / 2;
+    tx.valueOut = txVoutTotalValue.toFixed(8);
+    tx.isNewlyCreatedCoin = hasVin && tx.vin[0].coinbase != undefined;
+    // tx.shieldedSpend = tx.vShieldedSpend != undefined ? tx.vShieldedSpend : [];
+    // tx.shieldedOutput = tx.vShieldedOutput != undefined ? tx.vShieldedOutput : [];
+    tx.shieldedSpend = [];
+    tx.shieldedOutput = [];
+    // tx.bindingSig = tx.bindingSig == undefined? "" : tx.bindingSig;
+    
+    if (tx.overwintered && tx.version >= 4) {
+      tx.shieldedSpend = tx.vShieldedSpend;
+      tx.shieldedOutput = tx.vShieldedOutput;
+    }
+    
+    tx.fees = parseFloat((txVinTotalValue - txVoutTotalValue).toFixed(8));
+    if(tx.valueBalance != undefined) {
+      if(tx.vout[0] == undefined) {
+        tx.fees = parseFloat((tx.valueBalance + txVinTotalValue).toFixed(8));
+      } else if(tx.vin[0] == undefined) {
+        tx.fees = parseFloat((tx.valueBalance + txVoutTotalValue).toFixed(8));
+      } else {
+        tx.fees = parseFloat(((txVinTotalValue - txVoutTotalValue) + tx.valueBalance).toFixed(8));
+      }
+    }
+
+    // TODO
+    // 2. Update full view for transaction
   };
 
-  var _paginate = function(data) {
-    $scope.loading = false;
+  var _getPbaasCommitment = function(scriptPubKey) {
+    if(scriptPubKey.reserve_balance == undefined) {
+      return [];
+    }
+    var pbaasBalances = [];
+    const currencies = Object.entries(scriptPubKey.reserve_balance);
+    for(var i = 0; i < currencies.length; i++) {
+      const currency = currencies[i];
+      pbaasBalances.push(currency[1] + ' ' + currency[0]);
+    }
+    return pbaasBalances;
+  }
 
-    pagesTotal = data.pagesTotal;
-    pageNum += 1;
+  var _getOtherTxCommitment = function(scriptPubKey) {
+    if(scriptPubKey.crosschainimport) return 'crosschainimport';
+    
+    // Not seen the usage yet but exist in the API
+    if(scriptPubKey.crosschainexport) return 'crosschainexport';
+    if(scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
+    if(scriptPubKey.reservetransfer) return 'reservetransfer';
+    if(scriptPubKey.pbaasNotarization) return 'pbaasNotarization';
+    return '';
+  }
 
-    data.txs.forEach(function(tx) {
-      _processTX(tx);
-      $scope.txs.push(tx);
-    });
-  };
 
-  var _byBlock = function() {
-    TransactionsByBlock.get({
-      block: $routeParams.blockHash,
-      pageNum: pageNum
-    }, function(data) {
-      _paginate(data);
-    });
-  };
 
-  var _byAddress = function () {
-    TransactionsByAddress.get({
-      address: $routeParams.addrStr,
-      pageNum: pageNum
-    }, function(data) {
-      _paginate(data);
-    });
-  };
 
+
+
+
+  //////////////////////////////////////////////////////////////////////////
+  // Commong method for transaction and address page
+  //////////////////////////////////////////////////////////////////////////
   var _findTx = function(txid) {
+    // TODO - improve this.
+    // reduce getBlockCount call, add cooldown time based on the last request
+    // localstorage can be used
     VerusdRPC.getBlockCount()
     .then(function(blockData) {
       VerusdRPC.getRawTransaction(txid)
       .then(function(data) {
 
-        var tx = transformTransaction(data.result, blockData.result);
-        console.log(tx);
-        $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
+        // var data.result = transformTransaction(data.result, blockData.result);
+        // console.log(txid);
+        console.log(data);
+        // $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
         $rootScope.flashMessage = null;
-        $scope.tx = tx;
-        _processTX(tx);
-        $scope.txs.unshift(tx);
+        $scope.tx = data.result;
+        _processTX(data.result, blockData.result);
+        // $scope.txs.unshift(data.result);
+
+        // Used for address page only(not for transaction page)
+        $scope.txs.push(data.result);
+        // This might be expensive for large tx collection.
+        $scope.txIndexLabel[data.result.time] = (startIndexLabel -= 1);
       })
       .catch(function(e) {
         if (e.status === 400) {
@@ -192,15 +293,153 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
     });
   };
 
-  function transformTransaction(tx, currentBlockHeight) {
-    tx.fees = 1.1; // TODO
-    tx.valueOut = 0.1; // TOD
-    tx.confirmations = currentBlockHeight - tx.height + 1;
-    tx.size = tx.hex.length / 2;
-    tx.isCoinBase = (tx.coinbase);
-    var transformed = structuredClone(tx);
-    return transformed;
+
+
+
+
+
+
+  //////////////////////////////////////////////////////////////////////////
+  // Address page helper methods
+  //////////////////////////////////////////////////////////////////////////
+  const MAX_ITEM_PER_SCROLL = 4;
+  const START_TX_INDEX_OFFSET = 2;
+  $scope.isGettingAllTx = true;
+  // One item is preloaded after getting all the txs so index 0 is already occupied
+  $scope.startTransactionIndex = null;
+  $scope.preProcessedTxIds = [];
+  $rootScope.addressPage = {
+    transactionCount: 0
   }
+
+  var _getNextTxRange = function() {
+    if($scope.isGettingAllTx) {
+      return {
+        start: 0,
+        end: 0,
+      };
+    }
+    // const txs = $scope.txs;
+    // console.log("items to run >>>");
+    // console.log($scope.txs);
+    const startPage = $scope.startTransactionIndex;
+    $scope.startTransactionIndex = ($scope.startTransactionIndex - MAX_ITEM_PER_SCROLL) - 1;
+    // console.log("items to run >>>");
+    // console.log(nextItems);
+    return {
+      start: startPage,
+      end: $scope.startTransactionIndex
+    };
+  }
+
+
+  var _getAllAddressTxs = function() {
+    $scope.isGettingAllTx = true;
+    $scope.hasTxFound = false;
+
+    VerusdRPC.getAddressTxIds([$routeParams.addrStr])
+    .then(function(data) {
+      $scope.preProcessedTxIds = data.result;
+      // Initialize the start index to the lenght - 1
+      // to start the display from the last tx.
+      // Don't use reverse(), it'll be slow
+      $scope.hasTxFound = data.result[0];
+      $scope.startTransactionIndex = $scope.preProcessedTxIds.length - START_TX_INDEX_OFFSET;
+      // Decremented in _findTx method
+      startIndexLabel = $scope.preProcessedTxIds.length + 1;
+
+      _findTx($scope.preProcessedTxIds[$scope.startTransactionIndex + 1]);
+      $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
+      $scope.isGettingAllTx = false;
+    });
+  }
+
+  // var _byBlock = function() {
+  //   TransactionsByBlock.get({
+  //     block: $routeParams.blockHash,
+  //     pageNum: pageNum
+  //   }, function(data) {
+  //     _paginate(data);
+  //   });
+  // };
+
+  var _byAddress = function () {
+    $scope.loading = true;
+    // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
+    // .then(function(data) {
+    var range = _getNextTxRange();
+    // while(range.end == 0) {
+    //   // $timeout(function() {
+    //   //   console.log("Resuming after pause.");
+    //   // }, 2000);
+    //   $scope.loading = true;
+    //   range = _getNextTxPageItemRange();
+    // }
+
+    // console.log("For processing >>");
+    // console.log(range);
+    // if(range.end == 0) {
+    //   $scope.loading = true;
+    //   return;
+    // }
+
+    // $scope.loading = true;
+    // if(range.end <= 0) { return; }
+    // console.log(" TX collected >>>");
+    // console.log($scope.txs);
+    // console.log($scope.preProcessedTxIds);
+    var txs = [];
+    // TODO - fix this duplicate tx showing up in RT6W1CydQS7VzkzQoF2X2SEZsv4VDjiQjn
+    // 10289743ca23cee8ffc2da7c44e105fb6051241d7d8f04473b726f4ef3553a76
+    for(var i = range.start; i > range.end; i--) {
+      if($scope.preProcessedTxIds[i] == undefined) { break; }
+      txs.push($scope.preProcessedTxIds[i]);
+    }
+    
+    // if(txs[0] == undefined) {
+    //   return;
+    // }
+    // $scope.loading = true;
+    _paginate(txs);
+    // });
+
+    // TransactionsByAddress.get({
+    //   address: $routeParams.addrStr,
+    //   pageNum: pageNum
+    // }, function(data) {
+    //   _paginate(data);
+    // });
+    $scope.loading = false;
+  };
+
+
+  var _paginate = function(data) {
+    pagesTotal = data.length;
+    // pageNum += 1;
+
+    // data.txs.forEach(function(tx) {
+    //startIndexLabel = txStart
+    data.forEach(function(tx) {
+      
+      // startIndexLabel -= 1;
+      _findTx(tx);
+      // $scope.txs.push(tx);
+    });    
+  };
+
+  
+
+  // function transformTransaction(tx, currentBlockHeight) {
+  //   // tx.fees = 1.1; // TODO
+  //   // tx.fees = transactionDetail.voutTotalValue - transactionDetail.vinTotalValue;
+  //   // tx.valueOut = 0.1; // TOD
+  //   // tx.confirmations = currentBlockHeight - tx.height + 1;
+  //   // f73abc67dbbbae282206f2129d74e85fcc7f93d9f53c9333385294632d81d4bb
+  //   // tx.size = tx.hex.length / 2;
+  //   // tx.isCoinBase = tx.coinbase;
+  //   var transformed = structuredClone(tx);
+  //   return transformed;
+  // }
 
   $scope.findThis = function() {
     _findTx($routeParams.txId);
@@ -209,39 +448,55 @@ function($scope, $rootScope, $routeParams, $location, Global, Transaction, Trans
   //Initial load
   $scope.load = function(from) {
     $scope.loadedBy = from;
+    // if($scope.preProcessedTxIds[0] == undefined) {
+    _getAllAddressTxs();
+    // }
     $scope.loadMore();
   };
 
   //Load more transactions for pagination
   $scope.loadMore = function() {
-    if (pageNum < pagesTotal && !$scope.loading) {
-      $scope.loading = true;
+    // if (pageNum < pagesTotal && !$scope.loading) {
 
-      if ($scope.loadedBy === 'address') {
-        _byAddress();
-      }
-      else {
-        _byBlock();
-      }
+    if ($scope.loadedBy === 'address') {
+      _byAddress();
+      // $scope.loading = false;
     }
+      // else {
+      //   _byBlock();
+      // }
+    // }
   };
 
   // Highlighted txout
+  
   if ($routeParams.v_type == '>' || $routeParams.v_type == '<') {
     $scope.from_vin = $routeParams.v_type == '<' ? true : false;
     $scope.from_vout = $routeParams.v_type == '>' ? true : false;
     $scope.v_index = parseInt($routeParams.v_index);
+    // console.log("v_index >>> ");
+    // console.log($scope.from_vin);
+    // console.log($scope.v_index);
+    
     $scope.itemsExpanded = true;
   }
   
   //Init without txs
   $scope.txs = [];
+  // If there's a memory issue, this can be removed.
+  // This only serves as the index counter in each tx card
+  $scope.txIndexLabel= {};
 
   $scope.$on('tx', function(event, txid) {
     _findTx(txid);
   });
 
 });
+
+
+
+
+
 
 angular.module('insight.transactions').controller('SendRawTransactionController',
   function($scope, $http) {

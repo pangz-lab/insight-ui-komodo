@@ -5,6 +5,7 @@ var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
+const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
 
 var defaultLanguage = localStorage.getItem('insight-language') || 'en';
@@ -31,7 +32,8 @@ angular.module('insight',[
   'insight.connection',
   'insight.currency',
   'insight.messages',
-  'insight.verusdrpc'
+  'insight.verusdrpc',
+  'insight.coinpaprika'
 ]);
 
 angular.module('insight.system', []);
@@ -46,3 +48,4 @@ angular.module('insight.connection', []);
 angular.module('insight.currency', []);
 angular.module('insight.messages', []);
 angular.module('insight.verusdrpc', []);
+angular.module('insight.coinpaprika', []);

@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO - remove this, no use
 angular.module('insight.address').factory('Address',
   function($resource) {
   return $resource(window.apiPrefix + '/addr/:addrStr/?noTxList=1', {
