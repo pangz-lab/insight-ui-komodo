@@ -1,5 +1,6 @@
 'use strict';
 
+// Todo add caching to avoid reloading of large resource
 angular.module('insight.verusdrpc')
   .factory('VerusdRPC', function ($http, $q) {
     function createPayload(method, params) {
@@ -32,6 +33,23 @@ angular.module('insight.verusdrpc')
     };
     
     function getBlockCount() {
+      // const saveCachedData = localStorage.getItem('_cacheGetBlockCount') || null;
+      // var isExpired = true;
+      // if(saveCachedData) {
+      //   const createdTime = new Date(saveCachedData.created).getTime();
+      //   const differenceMs = (new Date().getTime()) - createdTime;
+
+      //   isExpired = differenceMs > (1000 * 60);
+      // }
+
+      // if(!isExpired) {
+      //   return saveCachedData.data;
+      // }
+
+      // console.log("Getting new blockdata >>");
+      // const data = sendRequest(createPayload("getblockcount", []));
+      // localStorage.setItem('_cacheGetBlockCount', { data: data, created: Date.now() });
+      // return data;
       return sendRequest(createPayload("getblockcount", []));
     };
     

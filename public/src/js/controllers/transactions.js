@@ -148,7 +148,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     // vout operation
     ///////////////////////////////////
     _aggregateItems(tx.vout, function(items, i) {
-      console.log(typeof(items[i].scriptPubKey.addresses));
+      // console.log(typeof(items[i].scriptPubKey.addresses));
       const addressType = typeof(items[i].scriptPubKey.addresses);
       const pubKeyAddressess = items[i].scriptPubKey.addresses ? items[i].scriptPubKey.addresses : [];
       var isIdentityTx = false;
@@ -218,6 +218,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
 
     // TODO
     // 2. Update full view for transaction
+    // 3. fix sequence or just remove the tx counter? http://localhost:2222/address/iLAZzpXuQpapbysYzLNUDLbpLuGr6NwhbH
   };
 
   var _getPbaasCommitment = function(scriptPubKey) {
@@ -261,19 +262,17 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     .then(function(blockData) {
       VerusdRPC.getRawTransaction(txid)
       .then(function(data) {
+        
 
         // var data.result = transformTransaction(data.result, blockData.result);
         // console.log(txid);
-        console.log(data);
+        // console.log(data);
         // $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
         $rootScope.flashMessage = null;
-        $scope.tx = data.result;
         _processTX(data.result, blockData.result);
-        // $scope.txs.unshift(data.result);
-
+        $scope.tx = data.result;
         // Used for address page only(not for transaction page)
         $scope.txs.push(data.result);
-        // This might be expensive for large tx collection.
         $scope.txIndexLabel[data.result.time] = (startIndexLabel -= 1);
       })
       .catch(function(e) {
@@ -302,8 +301,8 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   //////////////////////////////////////////////////////////////////////////
   // Address page helper methods
   //////////////////////////////////////////////////////////////////////////
-  const MAX_ITEM_PER_SCROLL = 4;
-  const START_TX_INDEX_OFFSET = 2;
+  const MAX_ITEM_PER_SCROLL = 5;
+  // const START_TX_INDEX_OFFSET = 2;
   $scope.isGettingAllTx = true;
   // One item is preloaded after getting all the txs so index 0 is already occupied
   $scope.startTransactionIndex = null;
@@ -312,27 +311,6 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     transactionCount: 0
   }
 
-  var _getNextTxRange = function() {
-    if($scope.isGettingAllTx) {
-      return {
-        start: 0,
-        end: 0,
-      };
-    }
-    // const txs = $scope.txs;
-    // console.log("items to run >>>");
-    // console.log($scope.txs);
-    const startPage = $scope.startTransactionIndex;
-    $scope.startTransactionIndex = ($scope.startTransactionIndex - MAX_ITEM_PER_SCROLL) - 1;
-    // console.log("items to run >>>");
-    // console.log(nextItems);
-    return {
-      start: startPage,
-      end: $scope.startTransactionIndex
-    };
-  }
-
-
   var _getAllAddressTxs = function() {
     $scope.isGettingAllTx = true;
     $scope.hasTxFound = false;
@@ -340,18 +318,29 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     VerusdRPC.getAddressTxIds([$routeParams.addrStr])
     .then(function(data) {
       $scope.preProcessedTxIds = data.result;
-      // Initialize the start index to the lenght - 1
-      // to start the display from the last tx.
-      // Don't use reverse(), it'll be slow
       $scope.hasTxFound = data.result[0];
-      $scope.startTransactionIndex = $scope.preProcessedTxIds.length - START_TX_INDEX_OFFSET;
       // Decremented in _findTx method
       startIndexLabel = $scope.preProcessedTxIds.length + 1;
 
-      _findTx($scope.preProcessedTxIds[$scope.startTransactionIndex + 1]);
+      $scope.startTransactionIndex = data.result.length - 1;
+      _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
+      
+
       $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
       $scope.isGettingAllTx = false;
     });
+  }
+
+  var _getLastNElements = function(a, start, count) {
+    var x = 0;
+    var result = [];
+    for(var i = start; i >= 0; i--) {
+      if(x == count) { break; }
+      result.push(a[i]);
+      x += 1;
+    }
+    // console.log(result);
+    return result;
   }
 
   // var _byBlock = function() {
@@ -364,43 +353,50 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   // };
 
   var _byAddress = function () {
-    $scope.loading = true;
-    // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
-    // .then(function(data) {
-    var range = _getNextTxRange();
-    // while(range.end == 0) {
-    //   // $timeout(function() {
-    //   //   console.log("Resuming after pause.");
-    //   // }, 2000);
-    //   $scope.loading = true;
-    //   range = _getNextTxPageItemRange();
-    // }
-
-    // console.log("For processing >>");
-    // console.log(range);
-    // if(range.end == 0) {
-    //   $scope.loading = true;
-    //   return;
-    // }
-
     // $scope.loading = true;
-    // if(range.end <= 0) { return; }
-    // console.log(" TX collected >>>");
-    // console.log($scope.txs);
-    // console.log($scope.preProcessedTxIds);
-    var txs = [];
-    // TODO - fix this duplicate tx showing up in RT6W1CydQS7VzkzQoF2X2SEZsv4VDjiQjn
-    // 10289743ca23cee8ffc2da7c44e105fb6051241d7d8f04473b726f4ef3553a76
-    for(var i = range.start; i > range.end; i--) {
-      if($scope.preProcessedTxIds[i] == undefined) { break; }
-      txs.push($scope.preProcessedTxIds[i]);
-    }
+    // // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
+    // // .then(function(data) {
+    // var range = _getNextTxRange();
+    // // while(range.end == 0) {
+    // //   // $timeout(function() {
+    // //   //   console.log("Resuming after pause.");
+    // //   // }, 2000);
+    // //   $scope.loading = true;
+    // //   range = _getNextTxPageItemRange();
+    // // }
+
+    // // console.log("For processing >>");
+    // // console.log(range);
+    // // if(range.end == 0) {
+    // //   $scope.loading = true;
+    // //   return;
+    // // }
+
+    // // $scope.loading = true;
+    // // if(range.end <= 0) { return; }
+    // // console.log(" TX collected >>>");
+    // // console.log($scope.txs);
+    // // console.log($scope.preProcessedTxIds);
+    // var txs = [];
+    // // TODO - fix this duplicate tx showing up in RT6W1CydQS7VzkzQoF2X2SEZsv4VDjiQjn
+    // // 10289743ca23cee8ffc2da7c44e105fb6051241d7d8f04473b726f4ef3553a76
+    // for(var i = range.start; i > range.end; i--) {
+    //   if($scope.preProcessedTxIds[i] == undefined) { break; }
+    //   txs.push($scope.preProcessedTxIds[i]);
+    // }
     
     // if(txs[0] == undefined) {
     //   return;
     // }
     // $scope.loading = true;
-    _paginate(txs);
+    $scope.startTransactionIndex = $scope.startTransactionIndex - MAX_ITEM_PER_SCROLL;
+    _paginate(
+      _getLastNElements(
+        $scope.preProcessedTxIds,
+        $scope.startTransactionIndex,
+        MAX_ITEM_PER_SCROLL
+      )
+    );
     // });
 
     // TransactionsByAddress.get({
@@ -419,10 +415,14 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
 
     // data.txs.forEach(function(tx) {
     //startIndexLabel = txStart
+    // console.log(data);
     data.forEach(function(tx) {
       
-      // startIndexLabel -= 1;
+      // startIndexLabel -= 1;  
       _findTx(tx);
+      // const lastTx = $scope.tx;
+      // $scope.txs.push(lastTx);
+      // $scope.txIndexLabel[lastTx.time] = (startIndexLabel -= 1);
       // $scope.txs.push(tx);
     });    
   };
