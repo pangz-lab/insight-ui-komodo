@@ -17,26 +17,20 @@ angular.module('insight.blocks').controller('BlocksController',
     ScrollService.scrollToTop();
   };
 
-  // Will receive the redirect from status page block
   if ($routeParams.blockHeight) {
-    console.log("Redirect from status >>>");
-    console.log($routeParams);
-    VerusdRPC.getBlockDetailByHeight($routeParams.blockHeight)
+    // Will receive the redirect from status page when the "Blocks" value is clicked
+    _handleRedirectFromStatusPage($routeParams.blockHeight);
+  }
+
+  var _handleRedirectFromStatusPage = function(blockHeight) {
+    VerusdRPC.getBlockDetailByHeight(blockHeight)
     .then(function(data) {
-      $location.path('/block/' + data.result.hash);
+      $location.path('block/' + data.result.hash);
     })
     .catch(function(_) {
       $rootScope.flashMessage = 'Bad Request';
       $location.path('/');
     });
-    // BlockByHeight.get({
-    //   blockHeight: $routeParams.blockHeight
-    // }, function(hash) {
-    //   $location.path('/block/' + hash.blockHash);
-    // }, function() {
-    //   $rootScope.flashMessage = 'Bad Request';
-    //   $location.path('/');
-    // });
   }
 
   //Datepicker

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('insight.transactions').controller('transactionsController',
-function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBlock, VerusdRPC) {
+function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
   $scope.global = Global;
   $scope.loading = true;
   $scope.loadedBy = null;
@@ -140,7 +140,8 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     _aggregateItems(tx.vin == undefined ? [] : tx.vin, function(items, i) {
       items[i].uiWalletAddress = ( typeof(items[i].addresses) === "object" )
         ? items[i].addresses[0] 
-        : items[i].addresses;
+        // Older TXs
+        : items[i].address;
 
       txVinTotalValue += items[i].value;
     });
@@ -266,7 +267,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
 
         // var data.result = transformTransaction(data.result, blockData.result);
         // console.log(txid);
-        // console.log(data);
+        console.log(data);
         // $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
         $rootScope.flashMessage = null;
         // _processTX(data.result, blockData.result);

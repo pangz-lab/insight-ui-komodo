@@ -355,8 +355,8 @@ msgid "Redirecting..."
 msgstr "Перенаправление ..."
 
 #: public/views/includes/search.html:3
-msgid "Search for block, transaction or address"
-msgstr "Поиск блока, транзакции или адреса"
+msgid "Search for block, transaction, address or Verus ID"
+msgstr "Поиск блока, транзакции, адреса или идентификатора Verus"
 
 #: public/views/index.html:37
 msgid "See all blocks"

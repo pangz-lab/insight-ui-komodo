@@ -296,8 +296,8 @@ msgid "Redirecting..."
 msgstr "Redireccionando..."
 
 #: public/views/includes/header.html
-msgid "Search for block, transaction or address"
-msgstr "Buscar bloques, transacciones o direcciones"
+msgid "Search for block, transaction, address or Verus ID"
+msgstr "Buscar bloques, transacciones, direcciones o Verus ID"
 
 #: public/views/index.html
 msgid "See all blocks"

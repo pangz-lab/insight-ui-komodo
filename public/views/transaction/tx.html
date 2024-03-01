@@ -420,9 +420,9 @@
                 </div>
                 <div class="ellipsis">
                  <!-- <span data-ng-show="vout.notAddr">{{vout.scriptPubKey.identityprimary.primaryaddresses[0]}}</span> -->
-                 <span class="text-muted" title="Current Verus Address" data-ng-show="address == $root.currentAddr" data-ng-repeat="address in vout.multipleAddress.split(',') track by $index">
+                 <!-- <span class="text-muted" title="Current Verus Address" data-ng-show="address == $root.currentAddr" data-ng-repeat="address in vout.multipleAddress.split(',') track by $index">
                   {{vout.scriptPubKey.identityprimary.name}}
-                 </span>
+                 </span> -->
                  <!-- <a href="address/{{address}}"  data-ng-show="!vout.notAddr && address != $root.currentAddr" data-ng-repeat="address in vout.multipleAddress.split(',')"> -->
                  <a href="address/{{vout.uiWalletAddress}}">
                   {{vout.scriptPubKey.identityprimary.name}}@

@@ -37,34 +37,34 @@ angular.module('insight.status').controller('StatusController',
       return moment.min(m).fromNow();
     };
 
-    var _onSyncUpdate = function(sync) {
-      $scope.sync = sync;
-    };
+    // var _onSyncUpdate = function(sync) {
+    //   $scope.sync = sync;
+    // };
 
-    var _startSocket = function () {
-      socket.emit('subscribe', 'sync');
-      socket.on('status', function(sync) {
-        _onSyncUpdate(sync);
-      });
-    };
+    // var _startSocket = function () {
+    //   socket.emit('subscribe', 'sync');
+    //   socket.on('status', function(sync) {
+    //     _onSyncUpdate(sync);
+    //   });
+    // };
     
-    var socket = getSocket($scope);
-    socket.on('connect', function() {
-      _startSocket();
-    });
+    // var socket = getSocket($scope);
+    // socket.on('connect', function() {
+    //   _startSocket();
+    // });
 
 
-    $scope.getSync = function() {
-      _startSocket();
-      Sync.get({},
-        function(sync) {
-          _onSyncUpdate(sync);
-        },
-        function(e) {
-          var err = 'Could not get sync information' + e.toString();
-          $scope.sync = {
-            error: err
-          };
-        });
-    };
+    // $scope.getSync = function() {
+    //   _startSocket();
+    //   Sync.get({},
+    //     function(sync) {
+    //       _onSyncUpdate(sync);
+    //     },
+    //     function(e) {
+    //       var err = 'Could not get sync information' + e.toString();
+    //       $scope.sync = {
+    //         error: err
+    //       };
+    //     });
+    // };
   });

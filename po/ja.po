@@ -327,8 +327,8 @@ msgid "Redirecting..."
 msgstr "リダイレクトしています..."
 
 #: public/views/includes/search.html
-msgid "Search for block, transaction or address"
-msgstr "ブロック、トランザクション、アドレスを検索"
+msgid "Search for block, transaction, address or Verus ID"
+msgstr "ブロック、トランザクション、アドレス, ヴェルスID を検索"
 
 #: public/views/index.html
 msgid "See all blocks"
