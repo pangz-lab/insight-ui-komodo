@@ -17,21 +17,21 @@ angular.module('insight.blocks').controller('BlocksController',
     ScrollService.scrollToTop();
   };
 
-  if ($routeParams.blockHeight) {
-    // Will receive the redirect from status page when the "Blocks" value is clicked
-    _handleRedirectFromStatusPage($routeParams.blockHeight);
-  }
+  // if ($routeParams.blockHeight) {
+  //   // Will receive the redirect from status page when the "Blocks" value is clicked
+  //   _handleRedirectFromStatusPage($routeParams.blockHeight);
+  // }
 
-  var _handleRedirectFromStatusPage = function(blockHeight) {
-    VerusdRPC.getBlockDetailByHeight(blockHeight)
-    .then(function(data) {
-      $location.path('block/' + data.result.hash);
-    })
-    .catch(function(_) {
-      $rootScope.flashMessage = 'Bad Request';
-      $location.path('/');
-    });
-  }
+  // var _handleRedirectFromStatusPage = function(blockHeight) {
+  //   VerusdRPC.getBlockDetailByHeight(blockHeight)
+  //   .then(function(data) {
+  //     $location.path('block/' + data.result.hash);
+  //   })
+  //   .catch(function(_) {
+  //     $rootScope.flashMessage = 'Bad Request';
+  //     $location.path('/');
+  //   });
+  // }
 
   //Datepicker
   var _setCalendarDate = function(date) {

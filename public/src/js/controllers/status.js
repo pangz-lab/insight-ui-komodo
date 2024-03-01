@@ -8,6 +8,11 @@ angular.module('insight.status').controller('StatusController',
       VerusdRPC.getInfo()
       .then(function(data) {
         $scope.info = data.result;
+
+        VerusdRPC.getBlockDetailByHeight(data.result.blocks)
+        .then(function(data2) {
+          $scope.info.blockHash = data2.result.hash;
+        })
       });
       VerusdRPC.getMiningInfo()
       .then(function(data) {
