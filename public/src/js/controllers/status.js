@@ -1,26 +1,27 @@
 'use strict';
 
 angular.module('insight.status').controller('StatusController',
-  function($scope, Global, Status, Sync, getSocket, VerusdRPC) {
+  function($scope, Global, VerusdRPC) {
     $scope.global = Global;
 
     $scope.getBlockchainStatus = function() {
-      VerusdRPC.getInfo()
-      .then(function(data) {
-        $scope.info = data.result;
+      var requests = [
+        VerusdRPC.getInfo(),
+        VerusdRPC.getMiningInfo(),
+        VerusdRPC.getCoinSupply()
+      ];
 
-        VerusdRPC.getBlockDetailByHeight(data.result.blocks)
+      Promise.all(requests)
+      .then(function(response) {
+        $scope.info = response[0].result;
+        $scope.mininginfo = response[1].result;
+        $scope.coinSupply = response[2].result;
+
+        VerusdRPC.getBlockDetailByHeight($scope.info.blocks)
         .then(function(data2) {
           $scope.info.blockHash = data2.result.hash;
-        })
-      });
-      VerusdRPC.getMiningInfo()
-      .then(function(data) {
-        $scope.mininginfo = data.result;
-      });
-      VerusdRPC.getCoinSupply()
-      .then(function(data) {
-        $scope.coinSupply = data.result;
+          $scope.loaded = 1;
+        });
       });
     };
 
