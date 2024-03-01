@@ -5,6 +5,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   $scope.global = Global;
   $scope.loading = true;
   $scope.loadedBy = null;
+  $scope.addressTxCount = 0;
 
   // var pageNum = 0;
   // var pagesTotal = 1;
@@ -132,7 +133,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     txVoutTotalValue = 0;
     addressCommitments = {};
     const hasVin = tx.vin != undefined && tx.vin[0] != undefined;
-    const hasVout = tx.vout != undefined && tx.vout[0] != undefined;
+    // const hasVout = tx.vout != undefined && tx.vout[0] != undefined;
     ///////////////////////////////////
     // vin operation
     ///////////////////////////////////
@@ -198,7 +199,6 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     // tx.shieldedOutput = tx.vShieldedOutput != undefined ? tx.vShieldedOutput : [];
     tx.shieldedSpend = [];
     tx.shieldedOutput = [];
-    // tx.bindingSig = tx.bindingSig == undefined? "" : tx.bindingSig;
     
     if (tx.overwintered && tx.version >= 4) {
       tx.shieldedSpend = tx.vShieldedSpend;
@@ -269,11 +269,15 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
         // console.log(data);
         // $rootScope.titleDetail = tx.txid.substring(0,7) + '...';
         $rootScope.flashMessage = null;
+        // _processTX(data.result, blockData.result);
         _processTX(data.result, blockData.result);
         $scope.tx = data.result;
         // Used for address page only(not for transaction page)
+        data.result.timing = new Date(data.result.time).getTime();
+        // data.result.txCounter = startIndexLabel -= 1
         $scope.txs.push(data.result);
-        $scope.txIndexLabel[data.result.time] = (startIndexLabel -= 1);
+        // $scope.txs.push({tx: data.result, txCounter: (startIndexLabel -= 1) });
+        // $scope.txIndexLabel[data.result.time] = (startIndexLabel -= 1);
       })
       .catch(function(e) {
         if (e.status === 400) {
@@ -318,6 +322,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     VerusdRPC.getAddressTxIds([$routeParams.addrStr])
     .then(function(data) {
       $scope.preProcessedTxIds = data.result;
+      $scope.addressTxCount = data.result.length;
       $scope.hasTxFound = data.result[0];
       // Decremented in _findTx method
       startIndexLabel = $scope.preProcessedTxIds.length + 1;
@@ -330,7 +335,39 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
       $scope.isGettingAllTx = false;
     });
   }
+  
+  var _getAllBlockTxs = function(hashes) {
+    $scope.isGettingAllTx = true;
+    $scope.hasTxFound = false;
+    $scope.blockTxCount = hashes.length;
+    // $scope.hasTxFound = false;
 
+    // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
+    // .then(function(data) {
+    //   $scope.preProcessedTxIds = data.result;
+    //   $scope.hasTxFound = data.result[0];
+    //   // Decremented in _findTx method
+    //   startIndexLabel = $scope.preProcessedTxIds.length + 1;
+
+    //   $scope.startTransactionIndex = data.result.length - 1;
+    //   _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
+      
+
+    //   $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
+    //   $scope.isGettingAllTx = false;
+    // });
+    console.log("hashes >>>");
+    console.log(hashes);
+
+    startIndexLabel = $scope.preProcessedTxIds.length + 1;
+    $scope.preProcessedTxIds = hashes;
+    $scope.startTransactionIndex = hashes.length - 1;
+    _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
+    $scope.isGettingAllTx = false;
+    $scope.hasTxFound = hashes[0];
+  }
+
+  // TODO, put in a service
   var _getLastNElements = function(a, start, count) {
     var x = 0;
     var result = [];
@@ -352,43 +389,14 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   //   });
   // };
 
-  var _byAddress = function () {
-    // $scope.loading = true;
-    // // VerusdRPC.getAddressTxIds([$routeParams.addrStr])
-    // // .then(function(data) {
-    // var range = _getNextTxRange();
-    // // while(range.end == 0) {
-    // //   // $timeout(function() {
-    // //   //   console.log("Resuming after pause.");
-    // //   // }, 2000);
-    // //   $scope.loading = true;
-    // //   range = _getNextTxPageItemRange();
-    // // }
+  // TransactionsByAddress.get({
+    //   address: $routeParams.addrStr,
+    //   pageNum: pageNum
+    // }, function(data) {
+    //   _paginate(data);
+    // });
 
-    // // console.log("For processing >>");
-    // // console.log(range);
-    // // if(range.end == 0) {
-    // //   $scope.loading = true;
-    // //   return;
-    // // }
-
-    // // $scope.loading = true;
-    // // if(range.end <= 0) { return; }
-    // // console.log(" TX collected >>>");
-    // // console.log($scope.txs);
-    // // console.log($scope.preProcessedTxIds);
-    // var txs = [];
-    // // TODO - fix this duplicate tx showing up in RT6W1CydQS7VzkzQoF2X2SEZsv4VDjiQjn
-    // // 10289743ca23cee8ffc2da7c44e105fb6051241d7d8f04473b726f4ef3553a76
-    // for(var i = range.start; i > range.end; i--) {
-    //   if($scope.preProcessedTxIds[i] == undefined) { break; }
-    //   txs.push($scope.preProcessedTxIds[i]);
-    // }
-    
-    // if(txs[0] == undefined) {
-    //   return;
-    // }
-    // $scope.loading = true;
+  var _byBlock = function () {
     $scope.startTransactionIndex = $scope.startTransactionIndex - MAX_ITEM_PER_SCROLL;
     _paginate(
       _getLastNElements(
@@ -397,14 +405,20 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
         MAX_ITEM_PER_SCROLL
       )
     );
-    // });
-
-    // TransactionsByAddress.get({
-    //   address: $routeParams.addrStr,
-    //   pageNum: pageNum
-    // }, function(data) {
-    //   _paginate(data);
-    // });
+    
+    $scope.loading = false;
+  };
+  
+  var _byAddress = function () {
+    $scope.startTransactionIndex = $scope.startTransactionIndex - MAX_ITEM_PER_SCROLL;
+    _paginate(
+      _getLastNElements(
+        $scope.preProcessedTxIds,
+        $scope.startTransactionIndex,
+        MAX_ITEM_PER_SCROLL
+      )
+    );
+    
     $scope.loading = false;
   };
 
@@ -446,10 +460,17 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   };
 
   //Initial load
-  $scope.load = function(from) {
+  $scope.load = function(from, hashes) {
     $scope.loadedBy = from;
     // if($scope.preProcessedTxIds[0] == undefined) {
-    _getAllAddressTxs();
+    if($scope.loadedBy === 'address') {
+      _getAllAddressTxs();
+    } else {
+      console.log("hashes >>>");
+      console.log(hashes);
+      _getAllBlockTxs(hashes);
+      // _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
+    }
     // }
     $scope.loadMore();
   };
@@ -461,10 +482,9 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     if ($scope.loadedBy === 'address') {
       _byAddress();
       // $scope.loading = false;
+    } else {
+      _byBlock();
     }
-      // else {
-      //   _byBlock();
-      // }
     // }
   };
 

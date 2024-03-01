@@ -65,10 +65,16 @@
             <td><strong translate>Timestamp</strong></td>
             <td class="text-right text-muted">{{block.time * 1000 | date:'medium'}}</td>
           </tr>
-          <tr data-ng-show="block.poolInfo">
+          <!-- <tr data-ng-show="block.poolInfo">
             <td><strong translate>Mined by</strong></td>
             <td class="text-right text-muted">
               <a href="{{block.poolInfo.url}}" target="_blank" title="{{block.poolInfo.poolName}}">{{block.poolInfo.poolName}}</a>
+            </td>
+          </tr> -->
+          <tr>
+            <td><strong translate>Mined by</strong></td>
+            <td class="text-right text-muted">
+              <!-- <a href="{{block.poolInfo.url}}" target="_blank" title="{{block.poolInfo.poolName}}"></a> -->
             </td>
           </tr>
           <tr>
@@ -133,7 +139,7 @@
       </div>
     </div>
   </div>
-  <div data-ng-if="block.hash" data-ng-controller="transactionsController" data-ng-init="load('block')">
+  <div data-ng-if="block.hash" data-ng-controller="transactionsController" data-ng-init="load('block', block.tx)">
     <h3 translate>Transactions</h3>
     <div data-ng-include src="'views/transaction/list.html'" when-scrolled="loadMore()"></div>
   </div>

@@ -207,6 +207,14 @@ margin-left: 0;
   margin-left: 5px;
 }
 
+.mined-coins-gif {
+  display: inline-block;
+  width: 50px;
+  height: 45px;
+  background: transparent url(../img/mined_coins.gif) no-repeat;
+  margin-left: 5px;
+}
+
 #search { color: #000; } 
 
 #search::-webkit-input-placeholder {

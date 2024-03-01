@@ -32,6 +32,18 @@ angular.module('insight.verusdrpc')
       return sendRequest(createPayload("getrawtransaction", [txId, 1]));
     };
     
+    function getBlockDetail(heightOrTx) {
+      return sendRequest(createPayload("getblock", [heightOrTx]));
+    };
+    
+    function getBlockDetailByTx(tx) {
+      return getBlockDetail(tx);
+    };
+    
+    function getBlockDetailByHeight(height) {
+      return getBlockDetail(height);
+    };
+
     function getBlockCount() {
       // const saveCachedData = localStorage.getItem('_cacheGetBlockCount') || null;
       // var isExpired = true;
@@ -63,10 +75,22 @@ angular.module('insight.verusdrpc')
     function getAddressBalance(addresses) {
       return sendRequest(createPayload("getaddressbalance", [{"addresses": addresses}]));
     };
+    function getBlockHashes(startDatetime, endDatetime) {
+      return sendRequest(createPayload("getblockhashes", [startDatetime, endDatetime]));
+    };
 
     return {
       getRawTransaction: function(txId) {
         return getRawTransaction(txId);
+      },
+      getBlockDetail: function(heightOrTx) {
+        return getBlockDetail(heightOrTx);
+      },
+      getBlockDetailByTx: function(tx) {
+        return getBlockDetailByTx(tx);
+      },
+      getBlockDetailByHeight: function(height) {
+        return getBlockDetailByHeight(height);
       },
       getBlockCount: function() {
         return getBlockCount();
@@ -79,6 +103,9 @@ angular.module('insight.verusdrpc')
       },
       getAddressBalance: function(addresses) {
         return getAddressBalance(addresses);
+      },
+      getBlockHashes: function(startDatetime, endDatetime) {
+        return getBlockHashes(startDatetime, endDatetime);
       },
     };
 });
