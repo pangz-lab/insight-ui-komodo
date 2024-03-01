@@ -1,21 +1,36 @@
 'use strict';
 
 angular.module('insight.status').controller('StatusController',
-  function($scope, $routeParams, $location, Global, Status, Sync, getSocket) {
+  function($scope, Global, Status, Sync, getSocket, VerusdRPC) {
     $scope.global = Global;
 
-    $scope.getStatus = function(q) {
-      Status.get({
-          q: 'get' + q
-        },
-        function(d) {
-          $scope.loaded = 1;
-          angular.extend($scope, d);
-        },
-        function(e) {
-          $scope.error = 'API ERROR: ' + e.data;
-        });
+    $scope.getBlockchainStatus = function() {
+      VerusdRPC.getInfo()
+      .then(function(data) {
+        $scope.info = data.result;
+      });
+      VerusdRPC.getMiningInfo()
+      .then(function(data) {
+        $scope.mininginfo = data.result;
+      });
+      VerusdRPC.getCoinSupply()
+      .then(function(data) {
+        $scope.coinSupply = data.result;
+      });
     };
+
+    // $scope.getStatus = function(q) {
+    //   Status.get({
+    //       q: 'get' + q
+    //     },
+    //     function(d) {
+    //       $scope.loaded = 1;
+    //       angular.extend($scope, d);
+    //     },
+    //     function(e) {
+    //       $scope.error = 'API ERROR: ' + e.data;
+    //     });
+    // };
 
     $scope.humanSince = function(time) {
       var m = moment.unix(time / 1000);

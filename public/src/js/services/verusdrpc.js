@@ -28,6 +28,18 @@ angular.module('insight.verusdrpc')
       return deferred.promise;
     };
 
+    function getInfo() {
+      return sendRequest(createPayload("getinfo", []));
+    };
+    
+    function getMiningInfo() {
+      return sendRequest(createPayload("getmininginfo", []));
+    };
+    
+    function getCoinSupply() {
+      return sendRequest(createPayload("coinsupply", []));
+    };
+
     function getRawTransaction(txId) {
       return sendRequest(createPayload("getrawtransaction", [txId, 1]));
     };
@@ -80,6 +92,15 @@ angular.module('insight.verusdrpc')
     };
 
     return {
+      getInfo: function() {
+        return getInfo();
+      },
+      getMiningInfo: function() {
+        return getMiningInfo();
+      },
+      getCoinSupply: function() {
+        return getCoinSupply();
+      },
       getRawTransaction: function(txId) {
         return getRawTransaction(txId);
       },

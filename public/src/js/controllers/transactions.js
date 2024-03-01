@@ -11,7 +11,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
   // var pagesTotal = 1;
   var txVoutTotalValue = 0;
   var txVinTotalValue = 0;
-  var startIndexLabel = 0;
+  // var startIndexLabel = 0;
   // var addressCommitments = {};
   // var COIN = 100000000;
   const COIN = 1e8;
@@ -325,7 +325,7 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
       $scope.addressTxCount = data.result.length;
       $scope.hasTxFound = data.result[0];
       // Decremented in _findTx method
-      startIndexLabel = $scope.preProcessedTxIds.length + 1;
+      // startIndexLabel = $scope.preProcessedTxIds.length + 1;
 
       $scope.startTransactionIndex = data.result.length - 1;
       _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
@@ -356,10 +356,10 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     //   $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
     //   $scope.isGettingAllTx = false;
     // });
-    console.log("hashes >>>");
-    console.log(hashes);
+    // console.log("hashes >>>");
+    // console.log(hashes);
 
-    startIndexLabel = $scope.preProcessedTxIds.length + 1;
+    // startIndexLabel = $scope.preProcessedTxIds.length + 1;
     $scope.preProcessedTxIds = hashes;
     $scope.startTransactionIndex = hashes.length - 1;
     _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
@@ -466,8 +466,8 @@ function($scope, $rootScope, $routeParams, $location, Global, TransactionsByBloc
     if($scope.loadedBy === 'address') {
       _getAllAddressTxs();
     } else {
-      console.log("hashes >>>");
-      console.log(hashes);
+      // console.log("hashes >>>");
+      // console.log(hashes);
       _getAllBlockTxs(hashes);
       // _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
     }

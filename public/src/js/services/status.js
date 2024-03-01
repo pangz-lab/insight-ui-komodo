@@ -1,5 +1,5 @@
 'use strict';
-
+// TODO : remove this
 angular.module('insight.status')
   .factory('Status',
     function($resource) {

@@ -64,6 +64,11 @@ angular.module('insight.address').controller('AddressController',
 
       VerusdRPC.getAddressBalance([address])
       .then(function(data) {
+        if(data.error) {
+          $rootScope.flashMessage = 'Backend Error : ' + data.error.message + '(' + data.error.code+ ')';
+          $location.path('/');
+          return;
+        }
         const r = data.result;
         // console.log("Data from address controller");
         // console.log(data);
@@ -73,11 +78,13 @@ angular.module('insight.address').controller('AddressController',
         // $rootScope.flashMessage = null;
         // // $scope.address = $routeParams.addrStr;
         // $scope.address = $routeParams;
-        $scope.balance = ((r.balance).toFixed(8)/1e8).toString();
+        console.log(r);
+        const balance = r.balance == undefined? 0: r.balance;
+        $scope.balance = ((balance).toFixed(8)/1e8).toString();
         $scope.totalReceived = ((r.received).toFixed(8)/1e8).toString();
-        $scope.totalSent = ((r.received - r.balance)/1e8).toString();
-      }).
-      catch(function(e) {
+        $scope.totalSent = ((r.received - balance)/1e8).toString();
+      })
+      .catch(function(e) {
         if (e.status === 400) {
           $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
         } else if (e.status === 503) {
