@@ -11,6 +11,19 @@ angular.module('insight.system')
     function($resource) {
       return $resource(window.apiPrefix + '/version');
   })
+  .service('UnitConversionService', function() {
+    this.convert = function(value, unitSuffix) {
+      const units = ['-', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+      var unitIndex = 0;
+  
+      while (value >= 1000 && unitIndex < units.length - 1) {
+        value /= 1000;
+        unitIndex++;
+      }
+  
+      return value.toFixed(5) + ' ' + units[unitIndex] + unitSuffix;
+    }
+  })
   .service('ScrollService', function($window, $timeout) {
     this.scrollToTop = function() {
       var currentY = $window.pageYOffset;

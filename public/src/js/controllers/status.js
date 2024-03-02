@@ -1,10 +1,46 @@
 'use strict';
 
 angular.module('insight.status').controller('StatusController',
-  function($scope, Global, VerusdRPC) {
+  function($scope, Global, VerusdRPC, UnitConversionService) {
     $scope.global = Global;
+    const CACHE_KEY = 'vexplorer_status';
+    const CACHE_TTL_IN_SEC = 30;
+
+    $scope.shortenValue = function(v) {
+      if(v == null) return '';
+      return parseFloat(v).toFixed(2);
+    };
+    $scope.convertValue = function(v, unit) {
+      if(v == null) return '';
+      return UnitConversionService.convert(parseFloat(v), unit);
+    };
+
+    
+    var _setData = function() {
+      return {
+        group1: function(data) {
+          $scope.info = data[0].result;
+          $scope.mininginfo = data[1].result;
+          $scope.coinSupply = data[2].result;
+        },
+
+        group2: function(data2) {
+          $scope.info.blockHash = data2.result.hash;
+        }
+      };
+    };
 
     $scope.getBlockchainStatus = function() {
+      var cache = JSON.parse(localStorage.getItem(CACHE_KEY));
+
+      if(cache != undefined 
+        && Math.floor((new Date() - new Date(cache.createdAt)) / 1000) < CACHE_TTL_IN_SEC) {
+        _setData().group1(cache.data);
+        _setData().group2(cache.data[3]);
+        $scope.loaded = 1;
+        return;
+      }
+
       var requests = [
         VerusdRPC.getInfo(),
         VerusdRPC.getMiningInfo(),
@@ -13,13 +49,16 @@ angular.module('insight.status').controller('StatusController',
 
       Promise.all(requests)
       .then(function(response) {
-        $scope.info = response[0].result;
-        $scope.mininginfo = response[1].result;
-        $scope.coinSupply = response[2].result;
+        console.log("RAW response >>");
+        console.log(response);
+        _setData().group1(response);
+        const blocks = response[0].result.blocks;
 
-        VerusdRPC.getBlockDetailByHeight($scope.info.blocks)
-        .then(function(data2) {
-          $scope.info.blockHash = data2.result.hash;
+        VerusdRPC.getBlockDetailByHeight(blocks)
+        .then(function(response2) {
+          _setData().group2(response2);
+          response.push(response2);
+          localStorage.setItem(CACHE_KEY, JSON.stringify({ data: response, createdAt: new Date()}));
           $scope.loaded = 1;
         });
       });

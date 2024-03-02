@@ -52,46 +52,73 @@
     </div> <!-- END OF COL-8 -->
 
     <div class="col-xs-12 col-md-4 col-gray">
-      <h2 translate>Verus Blockchain information</h2>
+      <h2 translate>Verus Blockchain Information</h2>
       <!-- <table class="table" data-ng-controller="StatusController" data-ng-init="getStatus('Info');getStatus('MiningInfo');getStatus('coinSupply')"> -->
       <table class="table" data-ng-controller="StatusController" data-ng-init="getBlockchainStatus()">
         <thead  data-ng-include src="'views/includes/infoStatus.html'"></thead>
         <tbody>
           <tr>
             <td translate>Version</td>
-            <td class="text-right">{{info.version}} ( v{{info.VRSCversion}} )</td>
+            <td class="text-right" >
+              {{info.version}} ( v{{info.VRSCversion}} )
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Protocol version</td>
-            <td class="text-right">{{info.protocolversion}}</td>
+            <td class="text-right">
+              {{info.protocolversion}}
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Blocks</td>
-            <td class="text-right"><a href="block/{{info.blockHash}}">{{info.blocks}}</a></td>
+            <td class="text-right">
+              <a href="block/{{info.blockHash}}">{{info.blocks}}</a>
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Circulating Supply Transparent</td>
-            <td class="text-right">{{coinSupply.supply}} VRSC</td>
+            <td class="text-right">
+              {{shortenValue(coinSupply.supply)}} VRSC
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Circulating Supply in Z addresses</td>
-            <td class="text-right">{{coinSupply.zfunds}} VRSC</td>
+            <td class="text-right">
+              {{shortenValue(coinSupply.zfunds)}} VRSC
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Circulating Supply Total</td>
-            <td class="text-right">{{coinSupply.total}} VRSC</td>
+            <td class="text-right">
+              {{shortenValue(coinSupply.total)}} VRSC
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Network Hashrate</td>
-            <td class="text-right">{{mininginfo.networkhashps}}</td>
+            <td class="text-right">
+              {{convertValue(mininginfo.networkhashps, 'H/s')}}
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
            <td translate>Mining Difficulty</td>
-            <td class="text-right">{{info.difficulty}}</td>
+            <td class="text-right">
+              {{convertValue(info.difficulty, '')}}
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
           <tr>
             <td translate>Node connections</td>
-            <td class="text-right">{{info.connections}}</td>
+            <td class="text-right">
+              {{info.connections}}
+              <span class="loader-gif" data-ng-if="!loaded"></span>
+            </td>
           </tr>
         </tbody>
       </table>
