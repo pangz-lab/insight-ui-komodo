@@ -28,6 +28,7 @@ angular.module('insight.currency').controller('CurrencyController',
         if (value === 0.00000000) return '0 ' + this.symbol; // fix value to show
 
         var response;
+        var decimalNum = 0;
 
         if (this.symbol === 'USD') {
           response = _roundFloat((value * this.factor), 2);
@@ -41,10 +42,18 @@ angular.module('insight.currency').controller('CurrencyController',
           this.factor = 1;
           response = value;
         }
+
         // prevent sci notation
         if (response < 1e-7) response=response.toFixed(8);
+        
+        var num = response.toString().split('.');
+        const decimalLength = !num[1]?  5 : num[1].length;
+        const formatter = new Intl.NumberFormat('en-US', {
+          style: 'decimal',
+          minimumFractionDigits: decimalLength
+        });
 
-        return response + ' ' + this.symbol;
+        return formatter.format(response) + ' ' + this.symbol;
       }
 
       return 'value error';

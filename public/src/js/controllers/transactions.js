@@ -175,7 +175,7 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
       tx.vout[i].uiWalletAddress = uiWalletAddress[0] == undefined ? ' [ NO ADDRESS ] ' : uiWalletAddress;
       tx.vout[i].isSpent = items[i].spentTxId;
       tx.vout[i].multipleAddress = pubKeyAddressess.join(',');
-      tx.vout[i].identityTxTypeLabel = "TODO";
+      tx.vout[i].identityTxTypeLabel = "...";
       tx.vout[i].othercommitment = _getOtherTxCommitment(items[i].scriptPubKey);
       tx.vout[i].pbaasCurrencies = _getPbaasCommitment(items[i].scriptPubKey);
       tx.vout[i].isPbaasCurrencyExist = tx.vout[i].pbaasCurrencies[0] != undefined;
@@ -185,7 +185,7 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
       if(isIdentityTx) {
         VerusdRPC.getIdentity([identityPrimaryName, tx.height])
         .then(function(data) {
-          tx.vout[i].identityTxTypeLabel = (data.result) ? "Verus - ID mutation" : "Identity Commitment";
+          tx.vout[i].identityTxTypeLabel = (data.result) ? "Verus ID Mutation" : "Identity Commitment";
         });
       }
     });
@@ -194,6 +194,7 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
     // New properties calculated manually
     tx.confirmations = tx.height? currentBlockHeight - tx.height + 1 : 0;
     tx.size = tx.hex.length / 2;
+    txVoutTotalValue = parseFloat(txVoutTotalValue);
     tx.valueOut = txVoutTotalValue.toFixed(8);
     tx.isNewlyCreatedCoin = hasVin && tx.vin[0].coinbase != undefined;
     // tx.shieldedSpend = tx.vShieldedSpend != undefined ? tx.vShieldedSpend : [];
@@ -205,13 +206,13 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
       tx.shieldedSpend = tx.vShieldedSpend;
       tx.shieldedOutput = tx.vShieldedOutput;
     }
-    
+
     tx.fees = parseFloat((txVinTotalValue - txVoutTotalValue).toFixed(8));
     if(tx.valueBalance != undefined) {
       if(tx.vout[0] == undefined) {
         tx.fees = parseFloat((tx.valueBalance + txVinTotalValue).toFixed(8));
       } else if(tx.vin[0] == undefined) {
-        tx.fees = parseFloat((tx.valueBalance + txVoutTotalValue).toFixed(8));
+        tx.fees = parseFloat((tx.valueBalance - txVoutTotalValue).toFixed(8));
       } else {
         tx.fees = parseFloat(((txVinTotalValue - txVoutTotalValue) + tx.valueBalance).toFixed(8));
       }
@@ -319,19 +320,17 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
   var _getAllAddressTxs = function() {
     $scope.isGettingAllTx = true;
     $scope.hasTxFound = false;
+    $scope.loading = true;
 
     VerusdRPC.getAddressTxIds([$routeParams.addrStr])
     .then(function(data) {
       $scope.preProcessedTxIds = data.result;
       $scope.addressTxCount = data.result.length;
       $scope.hasTxFound = data.result[0];
-      // Decremented in _findTx method
-      // startIndexLabel = $scope.preProcessedTxIds.length + 1;
 
       $scope.startTransactionIndex = data.result.length - 1;
       _paginate(_getLastNElements($scope.preProcessedTxIds, $scope.startTransactionIndex, MAX_ITEM_PER_SCROLL));
       
-
       $rootScope.addressPage = { transactionCount: $scope.preProcessedTxIds.length };
       $scope.isGettingAllTx = false;
     });
@@ -439,7 +438,8 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
       // $scope.txs.push(lastTx);
       // $scope.txIndexLabel[lastTx.time] = (startIndexLabel -= 1);
       // $scope.txs.push(tx);
-    });    
+    });
+    $scope.loading = false;
   };
 
   

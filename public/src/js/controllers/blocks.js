@@ -10,6 +10,8 @@ angular.module('insight.blocks').controller('BlocksController',
   $scope.remainingTxCount = 0;
   $scope.pagination = {};
   const MAX_HASH_PER_LOAD = 50;
+  const DATE_TYPE_UTC = 1; // 1 UTC;
+  const DATE_TYPE_LOCAL = 0; // 0 local;
   // $scope.allTxs 
 
   // TODO, put in rootscope
@@ -33,11 +35,26 @@ angular.module('insight.blocks').controller('BlocksController',
   //   });
   // }
 
+  // $scope.dateType = DATE_TYPE_UTC;
+
+  // $scope.changeDateType = function(type) {
+  //   $scope.dateType = type;
+  // };
+
+  // var _initDate = function(date) {
+  //   if($scope.dateType == DATE_TYPE_UTC) {
+  //     var d = new Date();
+  //     return d.getUTCDate();
+  //   }
+
+  //   return date ? new Date(date) : new Date();
+  // };
+
   //Datepicker
   var _setCalendarDate = function(date) {
     $scope.dt = date;
   };
-
+  
   var _createDatePaginationDisplay = function(date) {
     $scope.pagination = {};
     const d = new Date(date);
@@ -59,9 +76,10 @@ angular.module('insight.blocks').controller('BlocksController',
   };
 
   var _formatTimestamp = function (date) {
-    var yyyy = date.getUTCFullYear().toString();
-    var mm = (date.getUTCMonth() + 1).toString(); // getMonth() is zero-based
-    var dd  = date.getUTCDate().toString();
+    const isUtc = false;
+    var yyyy = (isUtc? date.getUTCFullYear() : date.getFullYear()). toString();
+    var mm = ((isUtc? date.getUTCMonth() : date.getMonth()) + 1).toString(); // getMonth() is zero-based
+    var dd  = (isUtc? date.getUTCDate() : date.getDate()) .toString();
 
     return yyyy + '-' + (mm[1] ? mm : '0' + mm[0]) + '-' + (dd[1] ? dd : '0' + dd[0]); //padding
   };
@@ -129,7 +147,7 @@ angular.module('insight.blocks').controller('BlocksController',
     $scope.loading = true;
 
     if ($routeParams.blockDate) {
-      $scope.detail = 'On ' + $routeParams.blockDate;
+      $scope.detail = '🗓 On ' + $routeParams.blockDate;
     }
 
     if ($routeParams.startTimestamp) {
@@ -141,20 +159,21 @@ angular.module('insight.blocks').controller('BlocksController',
 
     $rootScope.titleDetail = $scope.detail;
     
-    console.log("BLock list >>");
-    console.log($routeParams.startTimestamp);
-    console.log($routeParams.blockDate);
+    // console.log("BLock list >>");
+    // console.log($routeParams.startTimestamp);
+    // console.log($routeParams.blockDate);
 
     const blockDate = $routeParams.blockDate == undefined ? 
       (new Date()).toString() : 
       (new Date($routeParams.blockDate)).toString()
     const range = _getDateRange(blockDate);
     // const range = _getDateRange((new Date()).toString());
-    console.log(range);
+    _setCalendarDate(blockDate);
+    _createDatePaginationDisplay(blockDate);
 
     VerusdRPC.getBlockHashes(range.end, range.start)
     .then(function(data) {
-      console.log(data);
+      // console.log(data);
       $scope.currentDateTxList = data.result;
       
       $scope.lastStartIndex = $scope.currentDateTxList.length - 1;
@@ -163,8 +182,8 @@ angular.module('insight.blocks').controller('BlocksController',
         $scope.blocks.push(summary);
       });
       $scope.loading = false;
-      _setCalendarDate(blockDate);
-      _createDatePaginationDisplay(blockDate);
+      // _setCalendarDate(blockDate);
+      // _createDatePaginationDisplay(blockDate);
       // VerusdRPC.getBlockDetailByTx(currentTx)
       // .then(function(data) {
       //   const currentHeight = data.result.height;
@@ -174,6 +193,8 @@ angular.module('insight.blocks').controller('BlocksController',
       //   // $scope.pagination = res.pagination;
       // })
     });
+    // _setCalendarDate(blockDate);
+    // _createDatePaginationDisplay(blockDate);
     
 
     // Blocks.get({
@@ -206,10 +227,10 @@ angular.module('insight.blocks').controller('BlocksController',
   $scope.findOne = function() {
     $scope.loading = true;
 
-    console.log("TX ID");
-    console.log($routeParams);
-    console.log($routeParams.blockHash);
-    console.log("TX ID end >>");
+    // console.log("TX ID");
+    // console.log($routeParams);
+    // console.log($routeParams.blockHash);
+    // console.log("TX ID end >>");
     // console.log($scope.params);
     // console.log($routeParams.txId);
 
@@ -228,10 +249,10 @@ angular.module('insight.blocks').controller('BlocksController',
       data.result.isMainChain = (data.result.confirmations !== -1);
 
       const block = data.result;
-      console.log("block >>>");
-      console.log(data);
-      console.log($routeParams.blockHeight);
-      console.log(block);
+      // console.log("block >>>");
+      // console.log(data);
+      // console.log($routeParams.blockHeight);
+      // console.log(block);
 
       $rootScope.titleDetail = block.height;
       $rootScope.flashMessage = null;

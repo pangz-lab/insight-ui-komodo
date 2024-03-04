@@ -66,7 +66,7 @@ angular.module('insight.address').controller('AddressController',
       .then(function(data) {
         if(data.error) {
           $rootScope.flashMessage = 'Backend Error : ' + data.error.message + '(' + data.error.code+ ')';
-          $location.path('/');
+          // $location.path('/');
           return;
         }
         const r = data.result;

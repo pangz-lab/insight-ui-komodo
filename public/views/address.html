@@ -47,7 +47,7 @@
           <tr>
             <td><strong translate>No. Transactions</strong></td>
             <!-- <td class="ellipsis text-right">{{address.txApperances}}</td> -->
-            <td class="ellipsis text-right">{{$root.addressPage.transactionCount}}</td>
+            <td class="ellipsis text-right">{{$root.addressPage.transactionCount | number}}</td>
           </tr>
           <tr data-ng-if="isIdentityAddress">
               <td><strong translate>Identity Name</strong></td>
