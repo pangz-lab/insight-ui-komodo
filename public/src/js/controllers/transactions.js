@@ -185,7 +185,7 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
       if(isIdentityTx) {
         VerusdRPC.getIdentity([identityPrimaryName, tx.height])
         .then(function(data) {
-          tx.vout[i].identityTxTypeLabel = (data.result) ? "Verus ID Mutation" : "Identity Commitment";
+          tx.vout[i].identityTxTypeLabel = (data.result) ? "📇 Verus ID Mutation" : "🪪 Identity Commitment";
         });
       }
     });
@@ -237,13 +237,11 @@ function($scope, $rootScope, $routeParams, $location, Global, VerusdRPC) {
   }
 
   var _getOtherTxCommitment = function(scriptPubKey) {
-    if(scriptPubKey.crosschainimport) return 'crosschainimport';
-    
-    // Not seen the usage yet but exist in the API
-    if(scriptPubKey.crosschainexport) return 'crosschainexport';
+    if(scriptPubKey.crosschainimport) return '📥 crosschainimport';
+    if(scriptPubKey.crosschainexport) return '📤 crosschainexport';
     if(scriptPubKey.identitycommitment) return scriptPubKey.identitycommitment;
-    if(scriptPubKey.reservetransfer) return 'reservetransfer';
-    if(scriptPubKey.pbaasNotarization) return 'pbaasNotarization';
+    if(scriptPubKey.reservetransfer) return '💱 reservetransfer';
+    if(scriptPubKey.pbaasNotarization) return '⛓ pbaasNotarization';
     return '';
   }
 
