@@ -3,7 +3,12 @@
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
-const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-api-insight.pangz.tech'; //2223
+const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+
+// const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
+
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
@@ -33,6 +38,7 @@ angular.module('insight',[
   'insight.currency',
   'insight.messages',
   'insight.verusdrpc',
+  'insight.verusexplorerapi',
   'insight.coinpaprika'
 ]);
 
@@ -48,4 +54,5 @@ angular.module('insight.connection', []);
 angular.module('insight.currency', []);
 angular.module('insight.messages', []);
 angular.module('insight.verusdrpc', []);
+angular.module('insight.verusexplorerapi', []);
 angular.module('insight.coinpaprika', []);

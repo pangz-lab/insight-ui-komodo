@@ -10,7 +10,9 @@ angular.module('insight.verusdrpc')
         data: {"jsonrpc": "1.0", "id":"curltest", "method": method, "params": params},
         headers: {
           'Content-Type': 'application/json',
-          "Authorization": apiToken
+          "Authorization": apiToken,
+          // Remove this for local api, use the authorization value instead
+          'x-api-key': '12345'
         }
       }
     }
