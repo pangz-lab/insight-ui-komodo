@@ -66,6 +66,13 @@
           <thead  data-ng-include src="'views/includes/infoStatus.html'"></thead>
           <tbody>
             <tr>
+              <td translate>VRSC Version</td>
+              <td class="text-right" >
+                {{ 'v' + info.VRSCversion}}
+                <span class="loader-gif" data-ng-if="!loaded"></span>
+              </td>
+            </tr>
+            <tr>
               <td translate>Version</td>
               <td class="text-right">
                 {{info.version}} ( v{{info.VRSCversion}} )

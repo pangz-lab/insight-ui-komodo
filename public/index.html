@@ -85,6 +85,8 @@
 
     setInterval(function() {
       if(wsChannelObject.readyState !== WebSocket.OPEN) {
+        console.log('Removing event listeners...');
+
         console.log('Closing the current connection ...');
         wsChannelObject.close();
         
@@ -110,23 +112,34 @@
       return elapsedTimeInSeconds;
     }
 
-    function connectToWsServer() {
-      const socket = new WebSocket('wss://wip-ws-insight.pangz.tech');
-      // const socket = new WebSocket('ws://localhost:2220');
-      socket.addEventListener('open', function (event) {
-        // heartbeat();
-        console.log('Connected to WebSocket server');
-      });
-      
-      socket.addEventListener('ping', function (event) {
-        // heartbeat();
-        console.log('Server is pinging.');
-      });
+    function removeEventListeners() {
+      socket.removeEventListener('message', messageEventListener);
+      socket.removeEventListener('open', openEventListener);
+      socket.removeEventListener('ping', pingEventListener);
+    }
 
-      socket.addEventListener('message', function (event) {
-        lastReceivedTime = new Date().getTime();
-        console.log('Message from server:', event.data);
-      });
+    function messageEventListener (event) {
+      lastReceivedTime = new Date().getTime();
+      console.log('Message from server:', event.data);
+    };
+    
+    function openEventListener (event) {
+      console.log('Connected to WebSocket server');
+    };
+    
+    function pingEventListener (event) {
+      console.log('Server is pinging us.');
+    };
+
+    function connectToWsServer() {
+      const socket = new WebSocket('wss://wip-ws-insight.pangz.tech/verus/wss');
+      // const socket = new WebSocket('ws://localhost:2220');
+      
+      socket.addEventListener('open', openEventListener);
+      
+      socket.addEventListener('ping', pingEventListener);
+
+      socket.addEventListener('message', messageEventListener);
 
       socket.addEventListener('close', function close() {
         // clearTimeout(this.pingTimeout);

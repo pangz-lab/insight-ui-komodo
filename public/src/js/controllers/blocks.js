@@ -22,7 +22,7 @@ angular
         $scope.lastStartIndex = 0;
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
-        const MAX_HASH_PER_LOAD = 100;
+        const MAX_HASH_PER_LOAD = 300;
         // const DATE_TYPE_UTC = 1; // 1 UTC;
         // const DATE_TYPE_LOCAL = 0; // 0 local;
         // $scope.allTxs 
@@ -36,8 +36,8 @@ angular
         $window.wsChannelObject.addEventListener('message', wsEventHandler);
 
         $scope.$on('$destroy', function () {
-            // clearInterval(lazyLoadingInterval);
-            // lazyLoadingInterval = undefined;
+            clearInterval(lazyLoadingInterval);
+            lazyLoadingInterval = undefined;
             $window.wsChannelObject.removeEventListener('message', wsEventHandler);
         });
 
@@ -128,7 +128,7 @@ angular
             .getGeneratedBlocks(hashList)
             .then(function (hashResult) {
                 const data = hashResult.data;
-                if (data.length > 0) { onEachTxSummary(data); }
+                if (data[0]) { onEachTxSummary(data); }
                 $scope.loading = false;
             });
         };
@@ -172,11 +172,11 @@ angular
             .getBlockHashesByRange(range.end, range.start)
             .then(function (hashResult) {
                 const data = hashResult.data;
-                $scope.currentDateTxList = data;
-                if (data[0] == undefined) {
+                if (hashResult.error) {
                     $scope.loading = false;
                     return;
                 }
+                $scope.currentDateTxList = data;
 
                 $scope.lastStartIndex = $scope.currentDateTxList.length - 1;
                 _createBlockSummary(
@@ -255,16 +255,16 @@ angular
         $scope.blocks = [];
         $scope.params = $routeParams;
 
-        // var lazyLoadingInterval = setInterval(function () {
-        //     console.log("Load more data every 2 seconds...");
-        //     $scope.loadMorelist();
-        // }, 2000);
+        var lazyLoadingInterval = setInterval(function () {
+            console.log("Load more data every 2 seconds...");
+            $scope.loadMorelist();
+        }, 2000);
 
-        // setTimeout(function () {
-        //     if(lazyLoadingInterval != undefined) {
-        //         clearInterval(lazyLoadingInterval);
-        //         lazyLoadingInterval = undefined;
-        //     }
-        // }, 10000);
+        setTimeout(function () {
+            if(lazyLoadingInterval != undefined) {
+                clearInterval(lazyLoadingInterval);
+                lazyLoadingInterval = undefined;
+            }
+        }, 10000);
     }
 );
