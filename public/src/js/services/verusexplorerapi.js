@@ -50,6 +50,14 @@ angular.module('insight.verusexplorerapi')
     function getBlockchainHeight() {
       return sendRequest(createPayload('/api/blockchain/height', [], "GET"));
     };
+
+    function getBlockchainInfo() {
+      return sendRequest(createPayload('/api/blockchain/info', [], "GET"));
+    };
+    
+    function getMiningInfo() {
+      return sendRequest(createPayload('/api/blockchain/mining/info', [], "GET"));
+    };
     
     function getTransactionInfo(txHash) {
       return sendRequest(createPayload('/api/transaction/info', [txHash]));
@@ -80,12 +88,16 @@ angular.module('insight.verusexplorerapi')
       getBlockchainStatus: function() {
         return getBlockchainStatus();
       },
+      getBlockchainInfo: function() {
+        return getBlockchainInfo();
+      },
+      getMiningInfo: function() {
+        return getMiningInfo();
+      },
       getBlockchainHeight: function() {
-        //getBlockCount
         return getBlockchainHeight();
       },
       getTransactionInfo: function(txHash) {
-        //getRawTransaction
         return getTransactionInfo(txHash);
       },
       getIdentity: function(identityName, height) {

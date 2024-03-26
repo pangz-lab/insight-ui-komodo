@@ -7,11 +7,55 @@ angular
         $scope,
         Global,
         VerusExplorerApi,
-        UnitConversionService
+        VerusWssClient,
+        UnitConversionService,
+        LocalStore
     ) {
         $scope.global = Global;
-        const CACHE_KEY = 'vexplorer_status';
-        const CACHE_TTL_IN_SEC = 30;
+        const CACHE_KEY = 'vexp_stats';
+        const CACHE_TTL_IN_SEC = 86400;// 24 hours
+        const saveToCache = function(data) {
+            LocalStore.set(CACHE_KEY, data, CACHE_TTL_IN_SEC);
+        }
+
+        const wsTopic = VerusWssClient.getMessageTopic();
+        $scope.$on(wsTopic, function(event, rawEventData) {
+        // $scope.$on('wsmessage', function(data) {
+            // console.log("Getting message from main listener ...", rawEventData)
+            if(
+                rawEventData.status.data == undefined 
+                || rawEventData.status.error
+                || rawEventData.status.data.blocks <= $scope.info.blocks) {
+                return;
+            }
+            
+            setTimeout(function() {
+                updateScopeData(rawEventData.status.data);
+                $scope.$apply();
+            }, 500);
+        })
+
+        // var wsChannel = VerusWssClient.getMessageTopic();
+        // function wsOnMessageEH(event) {
+        //     console.log('Message from server: >> THIS StatusController scope >>');
+        //     const wsData = JSON.parse(event.data);
+        //     updateScopeData(wsData.status.data);
+        // }
+        // function wsOnOpen(event) {
+        //     console.log("Status OPEN Again 1...")
+        //     console.log("Status reconnecting ...")
+        //     // wsChannel.removeEventListener('message', wsOnMessageEH);
+        //     wsChannel = VerusWssClient.getClient();
+        // }
+
+        // wsChannel.addEventListener('message', wsOnMessageEH);
+        // wsChannel.addEventListener('open', wsOnOpen);
+        // $scope.$on('$destroy', function () {
+        //     wsChannel.removeEventListener('message', wsOnMessageEH);
+        //     wsChannel.removeEventListener('open', wsOnOpen);
+        // });
+
+
 
         $scope.shortenValue = function (v) {
             if (v == null) return '';
@@ -37,16 +81,38 @@ angular
         //   };
         // };
 
+        const updateScopeData = function(data) {
+            $scope.info = data;
+            // {
+            //     "VRSCversion": "1.2.1",
+            //     "protocolVersion": 170009,
+            //     "blocks": 2975765,
+            //     "connections": 46,
+            //     "difficulty": 3885301441879.934,
+            //     "version": 2000753,
+            //     "networkHashrate": 831732729899,
+            //     "circulatingSupply": 75294572.76572011,
+            //     "circulatingSupplyTotal": 75818787.51843677,
+            //     "circulatingZSupply": 524214.75271666
+            //   }
+
+            // $scope.mininginfo = data.mininginfo;
+            // $scope.coinSupply = data.coinSupply;
+            // $scope.info.blockHash = data.info.blocks;
+            saveToCache(data);
+        }
+
         $scope.getBlockchainStatus = function () {
-            $scope.loaded = false;
+            const cache = LocalStore.get(CACHE_KEY);
+            if(cache != undefined) {
+                updateScopeData(cache);
+                $scope.loaded = true;
+                return;
+            }
             VerusExplorerApi
                 .getBlockchainStatus()
                 .then(function (statusResult) {
-                    const data = statusResult.data;
-                    $scope.info = data.info;
-                    $scope.mininginfo = data.mininginfo;
-                    $scope.coinSupply = data.coinSupply;
-                    $scope.info.blockHash = data.info.blocks;
+                    updateScopeData(statusResult.data);
                     $scope.loaded = true;
                 });
             // var cache = JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -117,7 +183,7 @@ angular
         // });
 
 
-        // $scope.getSync = function() {
+        $scope.getSync = function() {
         //   _startSocket();
         //   Sync.get({},
         //     function(sync) {
@@ -129,5 +195,5 @@ angular
         //         error: err
         //       };
         //     });
-        // };
+        };
     });

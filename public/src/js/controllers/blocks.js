@@ -10,11 +10,13 @@ angular
         $rootScope,
         $routeParams,
         $location,
-        $window,
+        // $window,
         Global,
         VerusExplorerApi,
+        // VerusWssClient,
         ScrollService,
-        BlockService
+        BlockService,
+        $interval
     ) {
         $scope.global = Global;
         $scope.loading = false;
@@ -22,24 +24,24 @@ angular
         $scope.lastStartIndex = 0;
         $scope.remainingTxCount = 0;
         $scope.pagination = {};
-        const MAX_HASH_PER_LOAD = 300;
+        const MAX_HASH_PER_LOAD = 100;
         // const DATE_TYPE_UTC = 1; // 1 UTC;
         // const DATE_TYPE_LOCAL = 0; // 0 local;
         // $scope.allTxs 
 
 
-        function wsEventHandler(event) {
-            lastReceivedTime = new Date().getTime();
-            console.log('Message from server: >> THIS BLOCK SCOPE >>', event.data);
-        }
-
-        $window.wsChannelObject.addEventListener('message', wsEventHandler);
-
-        $scope.$on('$destroy', function () {
-            clearInterval(lazyLoadingInterval);
-            lazyLoadingInterval = undefined;
-            $window.wsChannelObject.removeEventListener('message', wsEventHandler);
-        });
+        // var wsChannel = VerusWssClient.getClient();
+        // function wsEventHandler(event) {
+        //     lastReceivedTime = new Date().getTime();
+        //     console.log('Message from server: >> THIS BLOCK SCOPE >>', event.data);
+        // }
+        // wsChannel.addEventListener('message', wsEventHandler);
+        // $scope.$on('$destroy', function () {
+        //     console.log("Destroying block controller resource");
+        //     $interval.cancel(lazyLoadingInterval);
+        //     lazyLoadingInterval = undefined;
+        //     wsChannel.removeEventListener('message', wsEventHandler);
+        // });
 
         // TODO, put in rootscope
         $scope.scrollToTop = function () {
@@ -215,7 +217,8 @@ angular
                 ),
                 function (summary) {
                     summary.map(function (e) {
-                    $scope.blocks.push(e);})
+                    $scope.blocks.push(e);
+                })
             });
         };
 
@@ -255,16 +258,16 @@ angular
         $scope.blocks = [];
         $scope.params = $routeParams;
 
-        var lazyLoadingInterval = setInterval(function () {
-            console.log("Load more data every 2 seconds...");
-            $scope.loadMorelist();
-        }, 2000);
+        // var lazyLoadingInterval = $interval(function () {
+        //     console.log("Load more data every 2 seconds...");
+        //     $scope.loadMorelist();
+        // }, 2000);
 
-        setTimeout(function () {
-            if(lazyLoadingInterval != undefined) {
-                clearInterval(lazyLoadingInterval);
-                lazyLoadingInterval = undefined;
-            }
-        }, 10000);
+        // setTimeout(function () {
+        //     if(lazyLoadingInterval != undefined) {
+        //         $interval.cancel(lazyLoadingInterval);
+        //         lazyLoadingInterval = undefined;
+        //     }
+        // }, 10000);
     }
 );

@@ -76,78 +76,78 @@
 	<script src="js/main.min.js"></script>
   <script>
 
-    var lastReceivedTime = new Date().getTime();
-    var wsChannelObject = connectToWsServer();
+    // var lastReceivedTime = new Date().getTime();
+    // var wsChannelObject = connectToWsServer();
 
-    // function onWsMessageReceived(data) {
-    //   console.log("WS Message recevied");
+    // // function onWsMessageReceived(data) {
+    // //   console.log("WS Message recevied");
+    // // }
+
+    // setInterval(function() {
+    //   if(wsChannelObject.readyState !== WebSocket.OPEN) {
+    //     console.log('Removing event listeners...');
+
+    //     console.log('Closing the current connection ...');
+    //     wsChannelObject.close();
+        
+    //     console.log('Opening a new one ...');
+    //     wsChannelObject = connectToWsServer();
+    //     return;
+    //   }
+
+    //   // If last received is less than a minute, don't ping
+    //   if(getLastReceivedInSeconds() > 60) {
+    //     console.log("pinging server")
+    //     wsChannelObject.send("ping from client");
+    //     return;
+    //   }
+
+    //   console.log("will send ping later to save the bandwidth...");
+    // }, 60000);
+
+    // function getLastReceivedInSeconds() {
+    //   const currentTime = new Date().getTime();
+    //   const elapsedTimeInSeconds = (currentTime - lastReceivedTime) / 1000;
+    //   console.log("Last data received : " + elapsedTimeInSeconds + ' seconds ago');
+    //   return elapsedTimeInSeconds;
     // }
 
-    setInterval(function() {
-      if(wsChannelObject.readyState !== WebSocket.OPEN) {
-        console.log('Removing event listeners...');
+    // function removeEventListeners() {
+    //   socket.removeEventListener('message', messageEventListener);
+    //   socket.removeEventListener('open', openEventListener);
+    //   socket.removeEventListener('ping', pingEventListener);
+    // }
 
-        console.log('Closing the current connection ...');
-        wsChannelObject.close();
-        
-        console.log('Opening a new one ...');
-        wsChannelObject = connectToWsServer();
-        return;
-      }
-
-      // If last received is less than a minute, don't ping
-      if(getLastReceivedInSeconds() > 60) {
-        console.log("pinging server")
-        wsChannelObject.send("ping from client");
-        return;
-      }
-
-      console.log("will send ping later to save the bandwidth...");
-    }, 60000);
-
-    function getLastReceivedInSeconds() {
-      const currentTime = new Date().getTime();
-      const elapsedTimeInSeconds = (currentTime - lastReceivedTime) / 1000;
-      console.log("Last data received : " + elapsedTimeInSeconds + ' seconds ago');
-      return elapsedTimeInSeconds;
-    }
-
-    function removeEventListeners() {
-      socket.removeEventListener('message', messageEventListener);
-      socket.removeEventListener('open', openEventListener);
-      socket.removeEventListener('ping', pingEventListener);
-    }
-
-    function messageEventListener (event) {
-      lastReceivedTime = new Date().getTime();
-      console.log('Message from server:', event.data);
-    };
+    // function messageEventListener (event) {
+    //   lastReceivedTime = new Date().getTime();
+    //   console.log('Message from server:', event.data);
+    // };
     
-    function openEventListener (event) {
-      console.log('Connected to WebSocket server');
-    };
+    // function openEventListener (event) {
+    //   console.log('Connected to WebSocket server');
+    // };
     
-    function pingEventListener (event) {
-      console.log('Server is pinging us.');
-    };
+    // function pingEventListener (event) {
+    //   console.log('Server is pinging us.');
+    // };
 
-    function connectToWsServer() {
-      const socket = new WebSocket('wss://wip-ws-insight.pangz.tech/verus/wss');
-      // const socket = new WebSocket('ws://localhost:2220');
+    // function connectToWsServer() {
+    //   const socket = new WebSocket('wss://wip-ws-insight.pangz.tech/verus/wss');
+    //   // const socket = new WebSocket('ws://localhost:2220');
       
-      socket.addEventListener('open', openEventListener);
+    //   socket.addEventListener('open', openEventListener);
       
-      socket.addEventListener('ping', pingEventListener);
+    //   socket.addEventListener('ping', pingEventListener);
 
-      socket.addEventListener('message', messageEventListener);
+    //   socket.addEventListener('message', messageEventListener);
 
-      socket.addEventListener('close', function close() {
-        // clearTimeout(this.pingTimeout);
-        console.log('WebSocket connection closed ...');
-      });
+    //   socket.addEventListener('close', function close() {
+    //     // clearTimeout(this.pingTimeout);
+    //     console.log('WebSocket connection closed ...');
+    //   });
 
-      return socket;
-    }
+    //   return socket;
+    // }
   </script>
 </body>
 </html>

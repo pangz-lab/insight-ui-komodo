@@ -60,7 +60,7 @@
           <tr>
             <td translate>VRSC Version</td>
             <td class="text-right" >
-              {{ 'v' + info.VRSCversion}}
+              {{ info.VRSCversion}}
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
@@ -74,42 +74,42 @@
           <tr>
             <td translate>Protocol version</td>
             <td class="text-right">
-              {{info.protocolversion}}
+              {{info.protocolVersion}}
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
           <tr>
             <td translate>Blocks</td>
             <td class="text-right">
-              <a href="block/{{info.blockHash}}">{{info.blocks}}</a>
+              <a href="block/{{info.blocks}}">{{info.blocks}}</a>
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
           <tr>
             <td translate>Circulating Supply Transparent</td>
             <td class="text-right">
-              {{shortenValue(coinSupply.supply)}} VRSC
+              {{shortenValue(info.circulatingSupply)}} VRSC
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
           <tr>
             <td translate>Circulating Supply in Z addresses</td>
             <td class="text-right">
-              {{shortenValue(coinSupply.zfunds)}} VRSC
+              {{shortenValue(info.circulatingZSupply)}} VRSC
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
           <tr>
             <td translate>Circulating Supply Total</td>
             <td class="text-right">
-              {{shortenValue(coinSupply.total)}} VRSC
+              {{shortenValue(info.circulatingSupplyTotal)}} VRSC
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>
           <tr>
             <td translate>Network Hashrate</td>
             <td class="text-right">
-              {{convertValue(mininginfo.networkhashps, 'H/s')}}
+              {{convertValue(info.networkHashrate, 'H/s')}}
               <span class="loader-gif" data-ng-if="!loaded"></span>
             </td>
           </tr>

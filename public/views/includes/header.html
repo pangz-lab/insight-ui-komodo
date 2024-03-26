@@ -19,7 +19,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
       <div class="status" data-ng-controller="StatusController">
-        <div data-ng-init="getSync()" class="pull-left">
+        <!-- <div data-ng-init="getSync()" class="pull-left">
           <span class="t text-danger"  data-ng-show="sync.error" tooltip="{{sync.error}}" tooltip-placement="bottom"> 
               <span  class="glyphicon glyphicon-warning-sign"></span>
               ERROR 
@@ -30,8 +30,9 @@
           </span>
           <span class="glyphicon glyphicon-ok" tooltip="Historic sync finished" tooltip-placement="bottom" data-ng-show="sync.status==='finished'"> </span>
         </div>
-        &nbsp; &middot;
-        <span data-ng-init="getStatus('Info')">
+        &nbsp; &middot; -->
+        <!-- <span data-ng-init="getStatus('Info')"> -->
+        <span data-ng-init="getBlockchainStatus()">
           <strong>{{'Conn'|translate}}</strong> {{info.connections}}
         </span> &middot;
         <strong>{{'Height'|translate}}</strong> {{totalBlocks || info.blocks}}

@@ -39,6 +39,8 @@ angular.module('insight',[
   'insight.messages',
   'insight.verusdrpc',
   'insight.verusexplorerapi',
+  'insight.veruswssclient',
+  'insight.localstore',
   'insight.coinpaprika'
 ]);
 
@@ -55,4 +57,6 @@ angular.module('insight.currency', []);
 angular.module('insight.messages', []);
 angular.module('insight.verusdrpc', []);
 angular.module('insight.verusexplorerapi', []);
+angular.module('insight.veruswssclient', []);
+angular.module('insight.localstore', []);
 angular.module('insight.coinpaprika', []);
