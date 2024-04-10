@@ -54,6 +54,8 @@ angular
         function messageEventListener (event) {
             lastReceivedTime = new Date().getTime();
             // console.log('Message from server:', event.data);
+            console.log(event.data);
+            console.log(typeof event.data);
             const d = JSON.parse(event.data.toString());
             // console.log('Parsed message from server:', d);
             if(d.status != undefined) { $rootScope.$broadcast(wsMessageTopic, d); }
@@ -70,8 +72,9 @@ angular
         };
 
         function connectToWsServer() {
-            const socket = new WebSocket('wss://wip-ws-insight.pangz.tech/verus/wss');
+            // const socket = new WebSocket('wss://wip-ws-insight.pangz.tech/verus/wss');
             // const socket = new WebSocket('ws://localhost:2220');
+            const socket = new WebSocket(wsServer);
             
             socket.addEventListener('open', openEventListener);
             socket.addEventListener('ping', pingEventListener);

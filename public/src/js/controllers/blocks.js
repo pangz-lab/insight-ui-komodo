@@ -15,8 +15,8 @@ angular
         VerusExplorerApi,
         // VerusWssClient,
         ScrollService,
-        BlockService,
-        $interval
+        BlockService
+        // $interval
     ) {
         $scope.global = Global;
         $scope.loading = false;

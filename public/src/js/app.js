@@ -2,10 +2,12 @@
 
 var testnet = false;
 var netSymbol = testnet ? 'VRSCTEST' : 'VRSC';
+const coinpaprikaEndpointKey = "vrsc-verus-coin";
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:3001';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://api.verus.services';
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-api-insight.pangz.tech'; //2223
 const apiServer = testnet ? 'http://127.0.0.1:27486' : 'https://wip-ws-insight.pangz.tech'; //2220 ws and express
+const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://wip-ws-insight.pangz.tech/verus/wss'; //2220 ws and express
 
 // const apiServer = testnet ? 'http://127.0.0.1:27486' : 'http://localhost:2220'; //2220 ws and express
 

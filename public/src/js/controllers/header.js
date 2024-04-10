@@ -41,15 +41,15 @@ angular.module('insight.system').controller('HeaderController',
       });
     };
 
-    var socket = getSocket($scope);
-    socket.on('connect', function() {
-      socket.emit('subscribe', 'inv');
+    // var socket = getSocket($scope);
+    // socket.on('connect', function() {
+    //   socket.emit('subscribe', 'inv');
 
-      socket.on('block', function(block) {
-        var blockHash = block.toString();
-        _getBlock(blockHash);
-      });
-    });
+    //   socket.on('block', function(block) {
+    //     var blockHash = block.toString();
+    //     _getBlock(blockHash);
+    //   });
+    // });
 
     $rootScope.isCollapsed = true;
   });

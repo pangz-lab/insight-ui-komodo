@@ -23,6 +23,13 @@ angular.module('insight.system')
   
       return value.toFixed(5) + ' ' + units[unitIndex] + unitSuffix;
     }
+
+    this.shortenString = function(text, maxLength) {
+        if (text.length <= maxLength) return text;
+
+        var halfLength = Math.floor((maxLength - 3) / 2); // Length of the ellipsis in the middle
+        return text.substring(0, halfLength) + '...' + text.substring(text.length - halfLength);
+    }
   })
   .service('ScrollService', function($window, $timeout) {
     this.scrollToTop = function() {
