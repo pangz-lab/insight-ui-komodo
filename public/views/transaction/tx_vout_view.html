@@ -18,8 +18,10 @@
                         data-ng-class="{'text-success': $root.currentAddr == vout.uiWalletAddress}">
                         {{$root.currency.getConvertion(vout.value)}}
                         <!-- {{vout.miniValue}} -->
-                        <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
+                        <a href="/tx/{{vout.isSpent}}" target="_blank">
+                            <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                             tooltip-placement="left">(S)</span>
+                        </a>
                         <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                             tooltip-placement="left">(U)</span>
                     </div>
@@ -43,8 +45,10 @@
                                 data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                                 <!-- {{vout_currency}} {{key}} -->
                                 {{currencyBalancePair}}
-                                <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
+                                <a href="/tx/{{vout.isSpent}}" target="_blank">
+                                    <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                     tooltip-placement="left">(S)</span>
+                                </a>
                                 <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                                     tooltip-placement="left">(U)</span>
                             </div>
@@ -69,8 +73,10 @@
                             data-ng-class="{'text-success': $root.currentAddr == vout.multipleAddress}">
                             <!-- Identity Created -->
                             <span class="badge">{{vout.identityTxTypeLabel}}</span>
-                            <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
-                                tooltip-placement="left">(S)</span>
+                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                                <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
+                                    tooltip-placement="left">(S)</span>
+                            </a>
                             <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                                 tooltip-placement="left">(U)</span>
                         </div>
@@ -95,8 +101,10 @@
                         <div class="pull-right btc-value"
                             data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                             Currency Defined
-                            <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
-                                tooltip-placement="left">(S)</span>
+                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                                <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
+                                    tooltip-placement="left">(S)</span>
+                            </a>
                             <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                                 tooltip-placement="left">(U)</span>
                         </div>
@@ -119,8 +127,11 @@
                         <div class="pull-right btc-value"
                             data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                             <span class="badge">{{vout.othercommitment}}</span>
-                            <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
-                                tooltip-placement="left">(S)</span>
+                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                                <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
+                                    tooltip-placement="left">(S)
+                                </span>
+                            </a>
                             <span class="text-success" data-ng-show="!vout.isSpent" tooltip="Output is unspent"
                                 tooltip-placement="left">(U)</span>
                         </div>
