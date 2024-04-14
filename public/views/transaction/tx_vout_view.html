@@ -18,7 +18,7 @@
                         data-ng-class="{'text-success': $root.currentAddr == vout.uiWalletAddress}">
                         {{$root.currency.getConvertion(vout.value)}}
                         <!-- {{vout.miniValue}} -->
-                        <a href="/tx/{{vout.isSpent}}" target="_blank">
+                        <a href="/tx/{{vout.isSpent}}">
                             <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                             tooltip-placement="left">(S)</span>
                         </a>
@@ -45,7 +45,7 @@
                                 data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                                 <!-- {{vout_currency}} {{key}} -->
                                 {{currencyBalancePair}}
-                                <a href="/tx/{{vout.isSpent}}" target="_blank">
+                                <a href="/tx/{{vout.isSpent}}">
                                     <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                     tooltip-placement="left">(S)</span>
                                 </a>
@@ -73,7 +73,7 @@
                             data-ng-class="{'text-success': $root.currentAddr == vout.multipleAddress}">
                             <!-- Identity Created -->
                             <span class="badge">{{vout.identityTxTypeLabel}}</span>
-                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                            <a href="/tx/{{vout.isSpent}}">
                                 <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                     tooltip-placement="left">(S)</span>
                             </a>
@@ -101,7 +101,7 @@
                         <div class="pull-right btc-value"
                             data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                             Currency Defined
-                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                            <a href="/tx/{{vout.isSpent}}">
                                 <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                     tooltip-placement="left">(S)</span>
                             </a>
@@ -127,7 +127,7 @@
                         <div class="pull-right btc-value"
                             data-ng-class="{'text-success': $root.currentAddr == vout.addr}">
                             <span class="badge">{{vout.othercommitment}}</span>
-                            <a href="/tx/{{vout.isSpent}}" target="_blank">
+                            <a href="/tx/{{vout.isSpent}}">
                                 <span class="text-danger" data-ng-show="vout.isSpent" tooltip="Output is spent"
                                     tooltip-placement="left">(S)
                                 </span>
