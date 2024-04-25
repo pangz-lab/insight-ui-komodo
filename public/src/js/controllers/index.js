@@ -20,22 +20,25 @@ angular
         const MAX_BLOCKS_COUNT = 5;
         const MAX_TX_COUNT = 30;
 
-        const CACHE_KEY_BLOCKS = 'vexp_blocks_received';
-        const CACHE_KEY_TXS = 'vexp_txs_received';
-        const CACHE_TTL_IN_SEC = 86400;// 24 hours
-        const saveToCache = function(data, key) {
-            LocalStore.set(key, data, CACHE_TTL_IN_SEC);
+        const CACHE_KEY_BLOCKS = localStore.latestBlocks.key;
+        const CACHE_TTL_BLOCK = localStore.latestBlocks.ttl;
+        
+        const CACHE_KEY_TXS = localStore.latestBlockTxs.key;
+        const CACHE_TTL_TXS = localStore.latestBlockTxs.ttl;
+        
+        const saveToCache = function(data, key, ttl) {
+            LocalStore.set(key, data, ttl);
         }
 
         const wsTopic = VerusWssClient.getMessageTopic();
         $scope.$on(wsTopic, function(_, rawEventData) {
             console.log("Getting message from main listener [INDEXCTRL]...", rawEventData)
-            if(rawEventData.latestBlocks.error || rawEventData.latestTxs.error) { return; }
+            if(rawEventData.latestBlock.error || rawEventData.latestTxs.error) { return; }
             
             setTimeout(function() {
-                if(rawEventData.latestBlocks.data.blocks[0] !== undefined) {
+                if(rawEventData.latestBlock.data !== undefined) {
                     updateBlocksScopeData(
-                        rawEventData.latestBlocks.data.blocks,
+                        [rawEventData.latestBlock.data],
                         false
                     );
                 }
@@ -43,6 +46,10 @@ angular
                 if(rawEventData.latestTxs.data !== undefined) {
                     updateTxHashScopeData(rawEventData.latestTxs.data, false);
                 }
+                
+                // if(rawEventData.nodeState.data !== undefined) {
+                //     updateChainNodeStateScopeData(rawEventData.nodeState.data, false);
+                // }
                 $scope.$apply();
             }, 100);
         });
@@ -68,7 +75,7 @@ angular
                     $scope.blocks.pop();
                 }
             }
-            saveToCache($scope.blocks, CACHE_KEY_BLOCKS);
+            saveToCache($scope.blocks, CACHE_KEY_BLOCKS, CACHE_TTL_BLOCK);
         }
         
         function updateTxHashScopeData(txsData, isCachedData) {
@@ -104,8 +111,13 @@ angular
                     $scope.txs.pop();
                 }
             }
-            saveToCache($scope.txs, CACHE_KEY_TXS);
+            saveToCache($scope.txs, CACHE_KEY_TXS, CACHE_TTL_TXS);
         }
+
+        // function updateChainNodeStateScopeData(data) {
+        //     $scope.chainNodeState = date;
+        //     saveToCache($scope.chainNodeState, CACHE_KEY_NODE_STATE, CACHE_TTL_NODE_STATE);
+        // }
 
         $scope.loadData = function () {
             var cache = LocalStore.get(CACHE_KEY_BLOCKS);
@@ -117,6 +129,11 @@ angular
             if(cache != undefined) {
                 updateTxHashScopeData(cache, true);
             }
+            
+            // cache = LocalStore.get(CACHE_KEY_NODE_STATE);
+            // if(cache != undefined) {
+            //     updateChainNodeStateScopeData(cache);
+            // }
         };
 
 
@@ -128,4 +145,5 @@ angular
 
         $scope.txs = [];
         $scope.blocks = [];
+        $scope.chainNodeState = [];
 });

@@ -6,14 +6,12 @@ angular
 .service('LocalStore',
     function () {
         this.set = function(key, value, ttlInSeconds) {
-            key = getNamespace(key);
             var ttl = new Date();
             ttl.setSeconds(ttl.getSeconds() + ttlInSeconds);
             localStorage.setItem(key, JSON.stringify({ data: value, createdAt: new Date(), ttl: ttl}));
         }
         
         this.get = function(key) {
-            key = getNamespace(key);
             const cache = JSON.parse(localStorage.getItem(key));
             if(cache != undefined && !this.isExpired(cache)) {
                 return cache.data;
@@ -28,6 +26,4 @@ angular
             return cache != undefined &&
             Math.floor((new Date() - new Date(cache.createdAt)) / 1000) < ttl;
         }
-
-        function getNamespace(key) { return netSymbol +':'+ key; }
 });

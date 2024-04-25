@@ -2,7 +2,15 @@
 
 // Todo add caching to avoid reloading of large resource
 angular.module('insight.verusexplorerapi')
-  .factory('VerusExplorerApi', function ($http, $q) {
+  .factory('VerusExplorerApi',
+  function (
+    $http,
+    $q,
+    LocalStore
+  ) {
+
+    // const cacheKeys = localStore.api;
+
     function createPayload(endpoint, params, method) {
       const requestMethod = method == undefined? "POST": method;
       return {
@@ -40,7 +48,7 @@ angular.module('insight.verusexplorerapi')
     };
     
     function getBlockInfo(blockHeightOrHash) {
-      return sendRequest(createPayload('/api/block/info', [blockHeightOrHash]));
+      return sendRequest(createPayload("/api/block/" + blockHeightOrHash + "/info", [], "GET"));
     };
     
     function getBlockchainStatus() {
@@ -74,6 +82,10 @@ angular.module('insight.verusexplorerapi')
     function getAddressBalance(address) {
       return sendRequest(createPayload('/api/address/balance', [address]));
     };
+
+    function saveToCache(key, value, ttl) {
+        LocalStore.set(key, value, ttl);
+    }
 
     return {
       getGeneratedBlocks: function(heightOrTxArray) {

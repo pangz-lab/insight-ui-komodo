@@ -14,6 +14,15 @@ const wsServer = testnet ? 'wss://wip-ws-insight.pangz.tech/verus/wss' : 'wss://
 // Need to secure the API token. Better put the API behind a gateway or a reverse proxy
 const coinPaprikaBaseUri = 'https://api.coinpaprika.com/v1';
 const apiToken =  testnet ? '' : 'Basic dmVydXNkZXNrdG9wOnk4RDZZWGhBRms2alNoSGlSQktBZ1JDeDB0OVpkTWYyUzNLMG83ek44U28="';
+const localStore = {
+  status: { key: netSymbol + ':vexp_stats', ttl: 86400 },
+  latestBlocks: { key: netSymbol + ':vexp_blocks_received', ttl: 86400 },
+  latestBlockTxs: { key: netSymbol + ':vexp_txs_received', ttl: 86400 },
+  nodeState: { key: netSymbol + ':vexp_chain_node_state', ttl: 86400 },
+  // api: {
+  //   blockchainHeight: { key: netSymbol + ':vexp_chain_height', ttl: 5 }
+  // },
+}
 
 var defaultLanguage = localStorage.getItem('insight-language') || 'en';
 var defaultCurrency = localStorage.getItem('insight-currency') || netSymbol;
