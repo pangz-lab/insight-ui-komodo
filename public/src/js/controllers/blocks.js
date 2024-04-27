@@ -43,9 +43,16 @@ angular
         //     wsChannel.removeEventListener('message', wsEventHandler);
         // });
 
-        // TODO, put in rootscope
-        $scope.scrollToTop = function () {
+        // // TODO, put in rootscope
+        // $scope.scrollToTop = function () {
+        //     ScrollService.scrollToTop();
+        // };
+
+        $rootScope.scrollToTop = function () {
             ScrollService.scrollToTop();
+        };
+        $rootScope.scrollToBottom = function () {
+            ScrollService.scrollToBottom();
         };
 
         // if ($routeParams.blockHeight) {
