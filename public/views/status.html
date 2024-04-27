@@ -27,7 +27,7 @@
           <tr>
             <td translate>Current Sync Status</td>
             <td class="text-right"> 
-            <span  data-ng-show="!sync.error">{{sync.status}}</span>
+            <span  data-ng-show="!sync.error">{{sync.message}}</span>
             <span class="text-danger" data-ng-show="sync.error">
               <span  class="glyphicon glyphicon-warning-sign"></span>
               {{sync.error}}
@@ -78,7 +78,7 @@
             </td>
           </tr>
           <tr>
-            <td translate>Protocol version</td>
+            <td translate>Protocol Version</td>
             <td class="text-right">
               {{info.protocolVersion}}
               <span class="loader-gif" data-ng-if="!loaded"></span>
@@ -127,7 +127,7 @@
             </td>
           </tr>
           <tr>
-            <td translate>Node connections</td>
+            <td translate>Node Connections</td>
             <td class="text-right">
               {{info.connections}}
               <span class="loader-gif" data-ng-if="!loaded"></span>

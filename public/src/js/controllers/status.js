@@ -9,26 +9,46 @@ angular
         VerusExplorerApi,
         VerusWssClient,
         UnitConversionService,
-        LocalStore
+        LocalStore,
+        WsEventDataManager
     ) {
         $scope.global = Global;
         $scope.info = { blocks: 0 };
         $scope.sync = { syncPercentage: 0 };
         $scope.chainNodeState = {};
-        const CACHE_KEY = localStore.status.key;
-        const CACHE_TTL = localStore.status.ttl;// 24 hours
+        const CACHE_KEY_STATUS = localStore.status.key;
+        // const CACHE_TTL_STATUS = localStore.status.ttl;// 24 hours
         const CACHE_KEY_NODE_STATE = localStore.nodeState.key;
-        const CACHE_TTL_NODE_STATE = localStore.nodeState.ttl;
-        const saveToCache = function(data, key, ttl) {
-            LocalStore.set(key, data, ttl);
-        }
+        // const CACHE_TTL_NODE_STATE = localStore.nodeState.ttl;
+        // const saveToCache = function(data, key, ttl) {
+        //     LocalStore.set(key, data, ttl);
+        // }
 
         const wsTopic = VerusWssClient.getMessageTopic();
         $scope.$on(wsTopic, function(event, rawEventData) {
             // console.log("Getting message from main listener ...", rawEventData)
 
+            // //Data here is already managed in index.js to maintain realtime update
+            // //even if viewing other tabs
+            // setTimeout(function() {
+            //     const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
+            //     if(chainStatus != undefined) {
+            //         $scope.info = WsEventDataManager.updateStatusScopeData(chainStatus);
+            //     }
+
+            //     const nodeStateCache = LocalStore.get(CACHE_KEY_NODE_STATE);
+            //     if(nodeStateCache != undefined) {
+            //         const r = WsEventDataManager.updateChainNodeStateScopeData(nodeStateCache);
+            //         $scope.sync = r.sync;
+            //         $scope.chainNodeState = r.chainNodeState;
+            //     }
+            //     $scope.$apply();
+            // }, 2000);
+
             if(rawEventData.nodeState.data !== undefined) {
-                updateChainNodeStateScopeData(rawEventData.nodeState.data);
+                const r = WsEventDataManager.updateChainNodeStateScopeData(rawEventData.nodeState.data);
+                $scope.sync = r.sync;
+                $scope.chainNodeState = r.chainNodeState;
             }
 
             if(
@@ -39,8 +59,7 @@ angular
             }
             
             setTimeout(function() {
-                $scope.sync.syncPercentage = rawEventData.nodeState.data.syncPercentage;
-                updateScopeData(rawEventData.status.data);
+                $scope.info = WsEventDataManager.updateStatusScopeData(rawEventData.status.data);
                 $scope.$apply();
             }, 500);
         });
@@ -54,28 +73,29 @@ angular
             return UnitConversionService.convert(parseFloat(v), unit);
         };
 
-        const updateScopeData = function(data) {
-            $scope.info = data;
-            saveToCache(data, CACHE_KEY, CACHE_TTL);
-        }
+        // const updateStatusScopeData = function(data) {
+        //     $scope.info = data;
+        //     saveToCache(data, CACHE_KEY_STATUS, CACHE_TTL_STATUS);
+        // }
 
-        function updateChainNodeStateScopeData(data) {
-            $scope.chainNodeState = data;
-            $scope.sync = data;
-            $scope.sync.error = data == undefined;
-            $scope.sync.status = 'Complete';
-            saveToCache($scope.chainNodeState, CACHE_KEY_NODE_STATE, CACHE_TTL_NODE_STATE);
-        }
+        // function updateChainNodeStateScopeData(data) {
+        //     $scope.chainNodeState = data;
+        //     $scope.sync = data;
+        //     $scope.sync.error = data == undefined;
+        //     saveToCache($scope.chainNodeState, CACHE_KEY_NODE_STATE, CACHE_TTL_NODE_STATE);
+        // }
 
         $scope.getBlockchainStatus = function () {
-            var chainStatus = LocalStore.get(CACHE_KEY);
+            const chainStatus = LocalStore.get(CACHE_KEY_STATUS);
             if(chainStatus != undefined) {
-                updateScopeData(chainStatus);
+                $scope.info = WsEventDataManager.updateStatusScopeData(chainStatus);
             }
 
             const nodeStateCache = LocalStore.get(CACHE_KEY_NODE_STATE);
             if(nodeStateCache != undefined) {
-                updateChainNodeStateScopeData(nodeStateCache);
+                const r = WsEventDataManager.updateChainNodeStateScopeData(nodeStateCache);
+                $scope.sync = r.sync;
+                $scope.chainNodeState = r.chainNodeState;
             }
 
             VerusExplorerApi
@@ -84,11 +104,13 @@ angular
                     if(statusResult.error) { return; }
 
                     if(!statusResult.data.status.error) {
-                        updateScopeData(statusResult.data.status.data);
+                        $scope.info = WsEventDataManager.updateStatusScopeData(statusResult.data.status.data);
                     }
                     
                     if(!statusResult.data.nodeState.error) {
-                        updateChainNodeStateScopeData(statusResult.data.nodeState.data);
+                        const r = WsEventDataManager.updateChainNodeStateScopeData(statusResult.data.nodeState.data);
+                        $scope.sync = r.sync;
+                        $scope.chainNodeState = r.chainNodeState;
                     }
                     $scope.loaded = true;
                 });
@@ -98,6 +120,4 @@ angular
             var m = moment.unix(time / 1000);
             return moment.min(m).fromNow();
         };
-
-        // $scope.getSync = function() {};
     });

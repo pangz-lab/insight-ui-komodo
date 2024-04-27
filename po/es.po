@@ -280,7 +280,7 @@ msgid "Previous Block"
 msgstr "Bloque Anterior"
 
 #: public/views/status.html
-msgid "Protocol version"
+msgid "Protocol Version"
 msgstr "Versión del protocolo"
 
 #: public/views/status.html

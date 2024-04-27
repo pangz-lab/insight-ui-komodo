@@ -5,8 +5,7 @@ angular.module('insight.verusexplorerapi')
   .factory('VerusExplorerApi',
   function (
     $http,
-    $q,
-    LocalStore
+    $q
   ) {
 
     // const cacheKeys = localStore.api;
@@ -68,7 +67,7 @@ angular.module('insight.verusexplorerapi')
     };
     
     function getTransactionInfo(txHash) {
-      return sendRequest(createPayload('/api/transaction/info', [txHash]));
+      return sendRequest(createPayload('/api/transaction/'+txHash+'/info', [], "GET"));
     };
 
     function getIdentity(identityName, height) {
@@ -76,16 +75,12 @@ angular.module('insight.verusexplorerapi')
     };
     
     function getAddressTxIds(address) {
-      return sendRequest(createPayload('/api/address/txids', [address]));
+      return sendRequest(createPayload('/api/address/'+address+'/txids', [], "GET"));
     };
     
     function getAddressBalance(address) {
-      return sendRequest(createPayload('/api/address/balance', [address]));
+      return sendRequest(createPayload('/api/address/'+address+'/balance', [], "GET"));
     };
-
-    function saveToCache(key, value, ttl) {
-        LocalStore.set(key, value, ttl);
-    }
 
     return {
       getGeneratedBlocks: function(heightOrTxArray) {

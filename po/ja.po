@@ -303,7 +303,7 @@ msgid "Previous Block"
 msgstr "前のブロック"
 
 #: public/views/status.html
-msgid "Protocol version"
+msgid "Protocol Version"
 msgstr "プロトコルバージョン"
 
 #: public/views/status.html

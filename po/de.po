@@ -284,7 +284,7 @@ msgid "Previous Block"
 msgstr "Letzter Block"
 
 #: public/views/status.html
-msgid "Protocol version"
+msgid "Protocol Version"
 msgstr "Protokollversion"
 
 #: public/views/status.html

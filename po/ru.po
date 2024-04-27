@@ -323,7 +323,7 @@ msgid "Previous Block"
 msgstr "Предыдущий блок"
 
 #: public/views/status.html:88
-msgid "Protocol version"
+msgid "Protocol Version"
 msgstr "Версия протокола"
 
 #: public/views/status.html:112
