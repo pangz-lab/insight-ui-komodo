@@ -160,9 +160,9 @@ angular.module('insight.transactions')
                 .then(function (rawTx) {
                     const blockData = blockHeight.data;
                     const rawTxData = rawTx.data; 
-                    console.log(" GETTING >>>");
-                    console.log(blockData);
-                    console.log(rawTxData);
+                    // console.log(" GETTING >>>");
+                    // console.log(blockData);
+                    // console.log(rawTxData);
                     $rootScope.flashMessage = null;
                     _processTX(rawTxData, blockData);
                     $scope.tx = rawTxData;

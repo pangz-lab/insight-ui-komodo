@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('insight.system').controller('HeaderController',
-  function($scope, $rootScope, $modal, getSocket, Global, Block) {
+  // function($scope, $rootScope, $modal, getSocket, Global, Block) {
+  function($scope, $rootScope, $modal, Global, Block) {
     $scope.global = Global;
 
     $rootScope.currency = {
@@ -33,13 +34,13 @@ angular.module('insight.system').controller('HeaderController',
       });
     };
 
-    var _getBlock = function(hash) {
-      Block.get({
-        blockHash: hash
-      }, function(res) {
-        $scope.totalBlocks = res.height;
-      });
-    };
+    // var _getBlock = function(hash) {
+    //   Block.get({
+    //     blockHash: hash
+    //   }, function(res) {
+    //     $scope.totalBlocks = res.height;
+    //   });
+    // };
 
     // var socket = getSocket($scope);
     // socket.on('connect', function() {

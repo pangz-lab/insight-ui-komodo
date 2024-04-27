@@ -7,7 +7,7 @@ angular
         $scope,
         $rootScope,
         $routeParams,
-        $location,
+        // $location,
         Global,
         // Address,
         // getSocket,
@@ -52,6 +52,9 @@ angular
         // });
 
         $scope.params = $routeParams;
+        $scope.addressBalance = {
+            loading: true
+        }
 
         $scope.findOne = function () {
             const address = $routeParams.addrStr;
@@ -76,10 +79,12 @@ angular
                 });
             }
 
+            $scope.addressBalance.loading = true;
             VerusExplorerApi
             .getAddressBalance(address)
             .then(function (addressBalance) {
                 const data = addressBalance.data;
+                $scope.addressBalance.loading = false;
                 // if (data.balance) {
                 //     $rootScope.flashMessage = 'Backend Error : ' + data.error.message + '(' + data.error.code + ')';
                 //     // $location.path('/');
@@ -102,14 +107,16 @@ angular
                 $scope.totalSent = ((received - balance) / 1e8).toString();
             })
             .catch(function (e) {
-                if (e.status === 400) {
-                    $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
-                } else if (e.status === 503) {
-                    $rootScope.flashMessage = 'Backend Error. ' + e.data;
-                } else {
-                    $rootScope.flashMessage = 'Address Not Found';
-                }
-                $location.path('/');
+                $scope.addressBalance.loading = false;
+                $rootScope.flashMessage = 'Failed to load balance summary. Reload to try again.';
+                // if (e.status === 400) {
+                //     $rootScope.flashMessage = 'Invalid Address: ' + $routeParams.addrStr;
+                // } else if (e.status === 503) {
+                //     $rootScope.flashMessage = 'Backend Error. ' + e.data;
+                // } else {
+                //     $rootScope.flashMessage = 'Address Not Found';
+                // }
+                // $location.path('/');
             });
 
             //   // Address.get({
